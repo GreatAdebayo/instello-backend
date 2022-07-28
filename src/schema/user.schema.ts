@@ -3,12 +3,8 @@ import *  as mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 export const UserSchema = new Schema({
-    profilePicture: {
+    userName: {
         type: String
-    },
-    bio: {
-        type: String,
-        default: "Hi there!"
     },
     firstName: {
         type: String,
@@ -27,6 +23,13 @@ export const UserSchema = new Schema({
         type: String,
         required: true,
     },
+    profilePicture: {
+        type: String
+    },
+    bio: {
+        type: String,
+        default: "Hi there!"
+    },
     email_verified: {
         type: Boolean,
         default: false,
@@ -34,6 +37,15 @@ export const UserSchema = new Schema({
     device_verified: {
         type: Boolean,
         default: true
+    },
+    noOfFollowing: {
+        type: Number
+    },
+    noOfFollowers: {
+        type: Number
+    },
+    noOfPosts: {
+        type: Number
     },
     ip: [
         {

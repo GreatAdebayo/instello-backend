@@ -2,5 +2,6 @@ import { UserService } from './user.service';
 export declare class UserController {
     private readonly userService;
     constructor(userService: UserService);
-    userInfo(req: any, res: any): Promise<void>;
+    privateUserInfo(req: any, res: any): Promise<any>;
+    publiceUserInfo(req: any, res: any): Promise<void>;
 }

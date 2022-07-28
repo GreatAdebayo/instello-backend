@@ -9,7 +9,7 @@ import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 export class SignupController {
     constructor(private readonly signupService: SignupService) { }
 
-    //default signup method
+
     @Post('default')
     async defaultSignup(@Body() body: SignUpDto, @Res() res, @Req() req) {
         // user IP address 
@@ -19,7 +19,7 @@ export class SignupController {
     }
 
 
-    //check verification code if valid and generate jwt
+
     @Post('verify')
     async verify(@Body() body: VerifyDto, @Res() res) {
         const response = await this.signupService.verify(body)
@@ -27,7 +27,7 @@ export class SignupController {
     }
 
 
-    //resend verification code
+
     @UseGuards(ThrottlerGuard)
     @Throttle(1, 60)
     @Post('resendcode')

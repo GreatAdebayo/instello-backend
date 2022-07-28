@@ -11,11 +11,19 @@ const common_1 = require("@nestjs/common");
 const user_service_1 = require("./user.service");
 const user_controller_1 = require("./user.controller");
 const jwt_strategy_1 = require("../jwt/jwt.strategy");
+const mongoose_1 = require("@nestjs/mongoose");
+const user_schema_1 = require("../schema/user.schema");
+const follow_schema_1 = require("../schema/follow.schema");
+const post_schema_1 = require("../schema/post.schema");
 let UserModule = class UserModule {
 };
 UserModule = __decorate([
     (0, common_1.Module)({
-        imports: [],
+        imports: [mongoose_1.MongooseModule.forFeature([
+                { name: 'User', schema: user_schema_1.UserSchema },
+                { name: 'Follow', schema: follow_schema_1.FollowSchema },
+                { name: 'Post', schema: post_schema_1.PostSchema },
+            ])],
         providers: [user_service_1.UserService, jwt_strategy_1.JwtStrategy],
         controllers: [user_controller_1.UserController]
     })

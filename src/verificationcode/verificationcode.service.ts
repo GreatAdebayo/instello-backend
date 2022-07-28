@@ -11,7 +11,7 @@ export class VerficationService {
     constructor(@InjectModel('VerificationCode') private readonly verificationCodeModel: Model<VerificationCodeDto>,
         private mailerService: MailerService) { }
 
-    // generate verification code and save in db 
+
     private async generateCode({ email, id }: { email: string, id: Types.ObjectId }) {
         // 4 digit code 
         const rand = Math.floor(1000 + Math.random() * 9000);
@@ -37,7 +37,7 @@ export class VerficationService {
         }
     }
 
-    // send verification code to email
+
     async sendVerificationCode({ email, id }: { email: string, id: Types.ObjectId }) {
         const code = await this.generateCode({ email, id });
         //send code to email

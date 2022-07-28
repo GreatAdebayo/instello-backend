@@ -21,7 +21,7 @@ export class SignupService {
 
 
 
-    //check if user exists function
+
     private async checkUser(email: string) {
         try {
             const user = await this.userModel.findOne({ email }).select("-password");
@@ -37,7 +37,7 @@ export class SignupService {
 
 
 
-    //default signup method
+
     async defaultSignup({ firstName, lastName, email, password }: SignUpDto, ip: string) {
         let response: ResponseDto;
         //check if email already exists
@@ -55,6 +55,7 @@ export class SignupService {
             //insert details into db
             try {
                 const user = new this.userModel({
+                    userName: lastName,
                     firstName,
                     lastName,
                     email,
@@ -79,7 +80,7 @@ export class SignupService {
 
     }
 
-    //check verification code if valid and generate jwt
+
     async verify({ email, code }: VerifyDto) {
         let response: ResponseDto;
         try {
@@ -150,6 +151,8 @@ export class SignupService {
             throw new ForbiddenException('something is wrong!')
         }
     }
+
+
 
     async resendCode({ email }) {
         let response: ResponseDto;

@@ -23,7 +23,7 @@
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose/types/inferschematype" />
 import { Model } from "mongoose";
-import { SignUpDto } from "src/signup/default/dto/signup.dto";
+import { SignUpDto } from "src/signup/dto/signup.dto";
 import { JwtService } from "@nestjs/jwt";
 import { VerficationService } from "src/verificationcode/verificationcode.service";
 import { VerifyDto } from "./dto/verify.dto";

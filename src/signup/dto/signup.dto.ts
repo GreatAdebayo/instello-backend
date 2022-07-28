@@ -21,8 +21,11 @@ export class SignUpDto {
     @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, { message: 'password too weak' })
     password: string
 
-
+    userName: string
     ip: string[]
     email_verified: boolean
     device_verified: boolean
+    noOfFollowers: number
+    noOfFollowing: number
+    noOfPosts: number
 }

@@ -12,10 +12,12 @@ const mongoose_1 = require("@nestjs/mongoose");
 const user_schema_1 = require("../schema/user.schema");
 const verificationcode_schema_1 = require("../schema/verificationcode.schema");
 const verificationcode_module_1 = require("../verificationcode/verificationcode.module");
-const signup_controller_1 = require("./default/signup.controller");
+const signup_controller_1 = require("./signup.controller");
 const signup_service_1 = require("./signup.service");
 const jwt_1 = require("@nestjs/jwt");
-const jwt_constant_1 = require("./jwt.constant");
+const jwt_constant_1 = require("../jwt/jwt.constant");
+const mailer_module_1 = require("../mailer/mailer.module");
+const throttler_1 = require("@nestjs/throttler");
 let SignupModule = class SignupModule {
 };
 SignupModule = __decorate([
@@ -25,7 +27,10 @@ SignupModule = __decorate([
                 { name: 'VerificationCode', schema: verificationcode_schema_1.VerificationCodeSchema }
             ]), verificationcode_module_1.VerificationModule, jwt_1.JwtModule.register({
                 secret: jwt_constant_1.jwtConstants.secret,
-                signOptions: { expiresIn: '60s' },
+                signOptions: { expiresIn: '60000s' },
+            }), mailer_module_1.MailerModule, throttler_1.ThrottlerModule.forRoot({
+                ttl: 60,
+                limit: 5,
             })],
         controllers: [signup_controller_1.SignupController],
         providers: [signup_service_1.SignupService]

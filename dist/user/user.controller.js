@@ -20,21 +20,32 @@ let UserController = class UserController {
     constructor(userService) {
         this.userService = userService;
     }
-    async userInfo(req, res) {
-        const response = await this.userService.userInfo(req.user.id);
+    async privateUserInfo(req, res) {
+        const response = await this.userService.privateUserInfo(req.user.id);
+        return res.status(response.status).json(response);
+    }
+    async publiceUserInfo(req, res) {
     }
 };
 __decorate([
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
-    (0, common_1.Get)('info'),
+    (0, common_1.Get)('private'),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
-], UserController.prototype, "userInfo", null);
+], UserController.prototype, "privateUserInfo", null);
+__decorate([
+    (0, common_1.Get)('public'),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "publiceUserInfo", null);
 UserController = __decorate([
-    (0, common_1.Controller)('api/user'),
+    (0, common_1.Controller)('api/userinfo'),
     __metadata("design:paramtypes", [user_service_1.UserService])
 ], UserController);
 exports.UserController = UserController;

@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { SignUpDto } from "src/signup/default/dto/signup.dto";
+import { SignUpDto } from "src/signup/dto/signup.dto";
 import * as bcrypt from 'bcrypt';
 import { JwtService } from "@nestjs/jwt";
 import { ResponseDto } from "./dto/response.dto";
