@@ -10,7 +10,7 @@ exports.UserModule = void 0;
 const common_1 = require("@nestjs/common");
 const user_service_1 = require("./user.service");
 const user_controller_1 = require("./user.controller");
-const jwt_strategy_1 = require("../jwt.strategy");
+const jwt_strategy_1 = require("../jwt/jwt.strategy");
 let UserModule = class UserModule {
 };
 UserModule = __decorate([

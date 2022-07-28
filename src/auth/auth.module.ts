@@ -6,7 +6,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { UserSchema } from "src/schema/user.schema";
 import { LocalStrategy } from "./local.strategy";
 import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from "src/jwt.constant";
+import { jwtConstants } from "src/jwt/jwt.constant";
 import { VerificationModule } from "src/verificationcode/verificationcode.module";
 import { VerificationCodeSchema } from "src/schema/verificationcode.schema";
 import { MailerModule } from "src/mailer/mailer.module";
