@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const auth_service_1 = require("./auth.service");
 const passport_1 = require("@nestjs/passport");
 const verify_dto_1 = require("./dto/verify.dto");
+const throttler_1 = require("@nestjs/throttler");
 let AuthController = class AuthController {
     constructor(authService) {
         this.authService = authService;
@@ -34,6 +35,8 @@ let AuthController = class AuthController {
 };
 __decorate([
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('local')),
+    (0, common_1.UseGuards)(throttler_1.ThrottlerGuard),
+    (0, throttler_1.Throttle)(5, 30),
     (0, common_1.Post)('signin'),
     __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
@@ -41,6 +44,8 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "signIn", null);
 __decorate([
+    (0, common_1.UseGuards)(throttler_1.ThrottlerGuard),
+    (0, throttler_1.Throttle)(5, 30),
     (0, common_1.Post)('signinverify'),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Request)()),

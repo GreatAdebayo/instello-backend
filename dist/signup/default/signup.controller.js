@@ -18,6 +18,7 @@ const sendcode_dto_1 = require("./dto/sendcode.dto");
 const signup_dto_1 = require("./dto/signup.dto");
 const verify_dto_1 = require("./dto/verify.dto");
 const signup_service_1 = require("./signup.service");
+const throttler_1 = require("@nestjs/throttler");
 let SignupController = class SignupController {
     constructor(signupService) {
         this.signupService = signupService;
@@ -54,6 +55,8 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], SignupController.prototype, "verify", null);
 __decorate([
+    (0, common_1.UseGuards)(throttler_1.ThrottlerGuard),
+    (0, throttler_1.Throttle)(1, 60),
     (0, common_1.Post)('resendcode'),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Res)()),

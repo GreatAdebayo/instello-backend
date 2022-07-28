@@ -8,6 +8,7 @@ import { SignupService } from "./signup.service";
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from "../jwt.constant";
 import { MailerModule } from "src/mailer/mailer.module";
+import { ThrottlerModule } from '@nestjs/throttler';
 
 
 @Module({
@@ -17,7 +18,10 @@ import { MailerModule } from "src/mailer/mailer.module";
     ]), VerificationModule, JwtModule.register({
         secret: jwtConstants.secret,
         signOptions: { expiresIn: '60s' },
-    }), MailerModule],
+    }), MailerModule, ThrottlerModule.forRoot({
+        ttl: 60,
+        limit: 5,
+    })],
     controllers: [SignupController],
     providers: [SignupService]
 

@@ -17,6 +17,7 @@ const signup_service_1 = require("./signup.service");
 const jwt_1 = require("@nestjs/jwt");
 const jwt_constant_1 = require("../jwt.constant");
 const mailer_module_1 = require("../../mailer/mailer.module");
+const throttler_1 = require("@nestjs/throttler");
 let SignupModule = class SignupModule {
 };
 SignupModule = __decorate([
@@ -27,7 +28,10 @@ SignupModule = __decorate([
             ]), verificationcode_module_1.VerificationModule, jwt_1.JwtModule.register({
                 secret: jwt_constant_1.jwtConstants.secret,
                 signOptions: { expiresIn: '60s' },
-            }), mailer_module_1.MailerModule],
+            }), mailer_module_1.MailerModule, throttler_1.ThrottlerModule.forRoot({
+                ttl: 60,
+                limit: 5,
+            })],
         controllers: [signup_controller_1.SignupController],
         providers: [signup_service_1.SignupService]
     })
