@@ -4,6 +4,13 @@ exports.UserSchema = void 0;
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 exports.UserSchema = new Schema({
+    profilePicture: {
+        type: String
+    },
+    bio: {
+        type: String,
+        default: "Hi there!"
+    },
     firstName: {
         type: String,
         required: true

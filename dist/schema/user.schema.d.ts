@@ -1,5 +1,6 @@
 import * as mongoose from 'mongoose';
 export declare const UserSchema: mongoose.Schema<any, mongoose.Model<any, any, any, any, any>, {}, {}, {}, {}, "type", {
+    bio: string;
     firstName: string;
     lastName: string;
     email: string;
@@ -10,4 +11,5 @@ export declare const UserSchema: mongoose.Schema<any, mongoose.Model<any, any, a
         type?: string;
         required?: unknown;
     }[];
+    profilePicture?: string;
 }>;

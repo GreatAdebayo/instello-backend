@@ -6,7 +6,7 @@ import { VerificationModule } from "src/verificationcode/verificationcode.module
 import { SignupController } from "./signup.controller";
 import { SignupService } from "./signup.service";
 import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from "../jwt.constant";
+import { jwtConstants } from "../../jwt.constant";
 import { MailerModule } from "src/mailer/mailer.module";
 import { ThrottlerModule } from '@nestjs/throttler';
 
@@ -17,7 +17,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
         { name: 'VerificationCode', schema: VerificationCodeSchema }
     ]), VerificationModule, JwtModule.register({
         secret: jwtConstants.secret,
-        signOptions: { expiresIn: '60s' },
+        signOptions: { expiresIn: '60000s' },
     }), MailerModule, ThrottlerModule.forRoot({
         ttl: 60,
         limit: 5,

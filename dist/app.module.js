@@ -14,12 +14,13 @@ const app_service_1 = require("./app.service");
 const signup_module_1 = require("./signup/default/signup.module");
 const config_1 = require("@nestjs/config");
 const auth_module_1 = require("./auth/auth.module");
+const user_module_1 = require("./user/user.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
     (0, common_1.Module)({
         imports: [signup_module_1.SignupModule, mongoose_1.MongooseModule.forRoot('mongodb+srv://great:8AYkra15GXQJjimm@shop.wej5v.mongodb.net/instello?retryWrites=true&w=majority'),
-            config_1.ConfigModule.forRoot({ isGlobal: true }), auth_module_1.AuthModule],
+            config_1.ConfigModule.forRoot({ isGlobal: true }), auth_module_1.AuthModule, user_module_1.UserModule],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     })

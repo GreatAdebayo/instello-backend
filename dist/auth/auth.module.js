@@ -15,7 +15,7 @@ const mongoose_1 = require("@nestjs/mongoose");
 const user_schema_1 = require("../schema/user.schema");
 const local_strategy_1 = require("./local.strategy");
 const jwt_1 = require("@nestjs/jwt");
-const jwt_constant_1 = require("../signup/jwt.constant");
+const jwt_constant_1 = require("../jwt.constant");
 const verificationcode_module_1 = require("../verificationcode/verificationcode.module");
 const verificationcode_schema_1 = require("../schema/verificationcode.schema");
 const mailer_module_1 = require("../mailer/mailer.module");
@@ -29,7 +29,7 @@ AuthModule = __decorate([
                 { name: 'VerificationCode', schema: verificationcode_schema_1.VerificationCodeSchema }
             ]), jwt_1.JwtModule.register({
                 secret: jwt_constant_1.jwtConstants.secret,
-                signOptions: { expiresIn: '60s' },
+                signOptions: { expiresIn: '60000s' },
             }), verificationcode_module_1.VerificationModule, mailer_module_1.MailerModule, throttler_1.ThrottlerModule.forRoot({
                 ttl: 60,
                 limit: 5,

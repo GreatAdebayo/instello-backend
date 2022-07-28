@@ -6,7 +6,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { UserSchema } from "src/schema/user.schema";
 import { LocalStrategy } from "./local.strategy";
 import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from "src/signup/jwt.constant";
+import { jwtConstants } from "src/jwt.constant";
 import { VerificationModule } from "src/verificationcode/verificationcode.module";
 import { VerificationCodeSchema } from "src/schema/verificationcode.schema";
 import { MailerModule } from "src/mailer/mailer.module";
@@ -19,7 +19,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
         { name: 'VerificationCode', schema: VerificationCodeSchema }
     ]), JwtModule.register({
         secret: jwtConstants.secret,
-        signOptions: { expiresIn: '60s' },
+        signOptions: { expiresIn: '60000s' },
     }), VerificationModule, MailerModule, ThrottlerModule.forRoot({
         ttl: 60,
         limit: 5,

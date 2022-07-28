@@ -3,6 +3,13 @@ import *  as mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 export const UserSchema = new Schema({
+    profilePicture: {
+        type: String
+    },
+    bio: {
+        type: String,
+        default: "Hi there!"
+    },
     firstName: {
         type: String,
         required: true
