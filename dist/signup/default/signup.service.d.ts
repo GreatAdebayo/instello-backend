@@ -1,16 +1,18 @@
 import { Model } from "mongoose";
-import { UserDto } from "./dto/user.dto";
+import { SignUpDto } from "./dto/signup.dto";
 import { VerficationService } from "src/verificationcode/verificationcode.service";
 import { VerifyDto } from "./dto/verify.dto";
 import { JwtService } from '@nestjs/jwt';
+import { MailerService } from "src/mailer/mailer.service";
 export declare class SignupService {
     private readonly userModel;
     private readonly verificationCodeModel;
     private verificationService;
     private jwtService;
-    constructor(userModel: Model<UserDto>, verificationCodeModel: Model<VerifyDto>, verificationService: VerficationService, jwtService: JwtService);
+    private mailerService;
+    constructor(userModel: Model<SignUpDto>, verificationCodeModel: Model<VerifyDto>, verificationService: VerficationService, jwtService: JwtService, mailerService: MailerService);
     private checkUser;
-    defaultSignup({ firstName, lastName, email, password }: UserDto, ip: string): Promise<{
+    defaultSignup({ firstName, lastName, email, password }: SignUpDto, ip: string): Promise<{
         message: string;
         status: number;
         isSuccess: false;

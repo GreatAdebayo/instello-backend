@@ -8,4 +8,12 @@ export declare class MailerService {
         email: string;
         code: number;
     }): Promise<void>;
+    welcomeMessage({ email, lastName }: {
+        email: string;
+        lastName: string;
+    }): Promise<void>;
+    loginMessage({ email, lastName }: {
+        email: string;
+        lastName: string;
+    }): Promise<void>;
 }

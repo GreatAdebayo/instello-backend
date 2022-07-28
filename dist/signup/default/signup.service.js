@@ -19,12 +19,14 @@ const mongoose_2 = require("mongoose");
 const bcrypt = require("bcrypt");
 const verificationcode_service_1 = require("../../verificationcode/verificationcode.service");
 const jwt_1 = require("@nestjs/jwt");
+const mailer_service_1 = require("../../mailer/mailer.service");
 let SignupService = class SignupService {
-    constructor(userModel, verificationCodeModel, verificationService, jwtService) {
+    constructor(userModel, verificationCodeModel, verificationService, jwtService, mailerService) {
         this.userModel = userModel;
         this.verificationCodeModel = verificationCodeModel;
         this.verificationService = verificationService;
         this.jwtService = jwtService;
+        this.mailerService = mailerService;
     }
     async checkUser(email) {
         try {
@@ -103,9 +105,10 @@ let SignupService = class SignupService {
                 await this.userModel.updateOne({ _id: user._id }, {
                     $set: { email_verified: true },
                 });
-                const payload = { email: user.email, sub: user._id };
+                const payload = { sub: user._id };
+                await this.mailerService.welcomeMessage({ email: user.email, lastName: user.lastName });
                 return response = {
-                    message: "account succefully created",
+                    message: "verified succesfully",
                     status: 200,
                     isSuccess: true,
                     data: this.jwtService.sign(payload)
@@ -153,7 +156,8 @@ SignupService = __decorate([
     __metadata("design:paramtypes", [mongoose_2.Model,
         mongoose_2.Model,
         verificationcode_service_1.VerficationService,
-        jwt_1.JwtService])
+        jwt_1.JwtService,
+        mailer_service_1.MailerService])
 ], SignupService);
 exports.SignupService = SignupService;
 //# sourceMappingURL=signup.service.js.map

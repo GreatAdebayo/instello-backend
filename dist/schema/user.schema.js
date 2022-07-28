@@ -25,6 +25,10 @@ exports.UserSchema = new Schema({
         type: Boolean,
         default: false,
     },
+    device_verified: {
+        type: Boolean,
+        default: true
+    },
     ip: [
         {
             type: String,

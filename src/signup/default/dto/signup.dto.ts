@@ -1,7 +1,7 @@
 import { IsEmail, IsNotEmpty, IsString, Matches, MinLength } from "class-validator"
 
 
-export class UserDto {
+export class SignUpDto {
     @IsNotEmpty()
     @IsString()
     firstName: string
@@ -24,4 +24,5 @@ export class UserDto {
 
     ip: string[]
     email_verified: boolean
+    device_verified: boolean
 }

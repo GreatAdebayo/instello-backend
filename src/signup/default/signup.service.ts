@@ -2,20 +2,25 @@ import { ForbiddenException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { ResponseDto } from "./dto/response.dto";
-import { UserDto } from "./dto/user.dto";
+import { SignUpDto } from "./dto/signup.dto";
 import * as bcrypt from 'bcrypt';
 import { VerficationService } from "src/verificationcode/verificationcode.service";
 import { VerifyDto } from "./dto/verify.dto";
 import { JwtService } from '@nestjs/jwt';
+import { MailerService } from "src/mailer/mailer.service";
 
 
 
 @Injectable({})
 export class SignupService {
-    constructor(@InjectModel('User') private readonly userModel: Model<UserDto>,
+    constructor(@InjectModel('User') private readonly userModel: Model<SignUpDto>,
         @InjectModel('VerificationCode') private readonly verificationCodeModel: Model<VerifyDto>,
         private verificationService: VerficationService,
-        private jwtService: JwtService) { }
+        private jwtService: JwtService,
+        private mailerService: MailerService) { }
+
+
+
     //check if user exists function
     private async checkUser(email: string) {
         try {
@@ -33,7 +38,7 @@ export class SignupService {
 
 
     //default signup method
-    async defaultSignup({ firstName, lastName, email, password }: UserDto, ip: string) {
+    async defaultSignup({ firstName, lastName, email, password }: SignUpDto, ip: string) {
         let response: ResponseDto;
         //check if email already exists
         if (await this.checkUser(email)) {
@@ -86,7 +91,7 @@ export class SignupService {
                 isSuccess: false
             }
 
-            //check if already verified
+            //check if email already verified
             if (user.email_verified) return response = {
                 message: "email already verified",
                 status: 400,
@@ -121,10 +126,15 @@ export class SignupService {
                         $set: { email_verified: true },
                     }
                 );
+
                 // generate JWT 
-                const payload = { email: user.email, sub: user._id };
+                const payload = { sub: user._id };
+
+                //send welcome message
+                await this.mailerService.welcomeMessage({ email: user.email, lastName: user.lastName })
+
                 return response = {
-                    message: "account succefully created",
+                    message: "verified succesfully",
                     status: 200,
                     isSuccess: true,
                     data: this.jwtService.sign(payload)

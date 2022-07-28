@@ -39,4 +39,18 @@ export class MailerService {
         await this.mailerBoilerplate({ email, subject, output })
         return;
     }
+
+    async welcomeMessage({ email, lastName }: { email: string, lastName: string }) {
+        const output = `<b>Welcome ${lastName} to instello</b>`;
+        const subject = "Great From Instello"
+        await this.mailerBoilerplate({ email, subject, output })
+        return;
+    }
+
+    async loginMessage({ email, lastName }: { email: string, lastName: string }) {
+        const output = `<b>${lastName}, You just logged into your instello account</b>`;
+        const subject = "Great From Instello"
+        await this.mailerBoilerplate({ email, subject, output })
+        return;
+    }
 }

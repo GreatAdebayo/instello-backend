@@ -7,6 +7,7 @@ import { SignupController } from "./signup.controller";
 import { SignupService } from "./signup.service";
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from "../jwt.constant";
+import { MailerModule } from "src/mailer/mailer.module";
 
 
 @Module({
@@ -16,7 +17,7 @@ import { jwtConstants } from "../jwt.constant";
     ]), VerificationModule, JwtModule.register({
         secret: jwtConstants.secret,
         signOptions: { expiresIn: '60s' },
-    })],
+    }), MailerModule],
     controllers: [SignupController],
     providers: [SignupService]
 

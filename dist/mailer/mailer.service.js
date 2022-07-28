@@ -43,6 +43,18 @@ let MailerService = class MailerService {
         await this.mailerBoilerplate({ email, subject, output });
         return;
     }
+    async welcomeMessage({ email, lastName }) {
+        const output = `<b>Welcome ${lastName} to instello</b>`;
+        const subject = "Great From Instello";
+        await this.mailerBoilerplate({ email, subject, output });
+        return;
+    }
+    async loginMessage({ email, lastName }) {
+        const output = `<b>${lastName}, You just logged into your instello account</b>`;
+        const subject = "Great From Instello";
+        await this.mailerBoilerplate({ email, subject, output });
+        return;
+    }
 };
 MailerService = __decorate([
     (0, common_1.Injectable)()
