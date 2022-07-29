@@ -30,10 +30,7 @@ AuthModule = __decorate([
             ]), jwt_1.JwtModule.register({
                 secret: jwt_constant_1.jwtConstants.secret,
                 signOptions: { expiresIn: '60000s' },
-            }), verificationcode_module_1.VerificationModule, mailer_module_1.MailerModule, throttler_1.ThrottlerModule.forRoot({
-                ttl: 60,
-                limit: 5,
-            })],
+            }), verificationcode_module_1.VerificationModule, mailer_module_1.MailerModule, throttler_1.ThrottlerModule.forRoot()],
         providers: [auth_service_1.AuthService, local_strategy_1.LocalStrategy],
         controllers: [auth_controller_1.AuthController]
     })

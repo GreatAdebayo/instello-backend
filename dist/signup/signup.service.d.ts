@@ -7,9 +7,9 @@ import { MailerService } from "src/mailer/mailer.service";
 export declare class SignupService {
     private readonly userModel;
     private readonly verificationCodeModel;
-    private verificationService;
-    private jwtService;
-    private mailerService;
+    private readonly verificationService;
+    private readonly jwtService;
+    private readonly mailerService;
     constructor(userModel: Model<UserDto>, verificationCodeModel: Model<VerifyDto>, verificationService: VerficationService, jwtService: JwtService, mailerService: MailerService);
     private checkUser;
     defaultSignup({ firstName, lastName, email, password }: UserDto, ip: string): Promise<{

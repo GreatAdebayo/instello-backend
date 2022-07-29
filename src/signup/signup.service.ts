@@ -15,9 +15,9 @@ import { MailerService } from "src/mailer/mailer.service";
 export class SignupService {
     constructor(@InjectModel('User') private readonly userModel: Model<UserDto>,
         @InjectModel('VerificationCode') private readonly verificationCodeModel: Model<VerifyDto>,
-        private verificationService: VerficationService,
-        private jwtService: JwtService,
-        private mailerService: MailerService) { }
+        private readonly verificationService: VerficationService,
+        private readonly jwtService: JwtService,
+        private readonly mailerService: MailerService) { }
 
 
 

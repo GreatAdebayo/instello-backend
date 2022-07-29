@@ -16,4 +16,5 @@ export declare class MailerService {
         email: string;
         lastName: string;
     }): Promise<void>;
+    passwordReset(email: string): Promise<void>;
 }

@@ -38,6 +38,7 @@ export const UserSchema = new Schema({
         type: Boolean,
         default: true
     },
+
     following: [],
     followers: [],
     noOfposts: {

@@ -20,13 +20,8 @@ import { ThrottlerModule } from '@nestjs/throttler';
     ]), JwtModule.register({
         secret: jwtConstants.secret,
         signOptions: { expiresIn: '60000s' },
-    }), VerificationModule, MailerModule, ThrottlerModule.forRoot({
-        ttl: 60,
-        limit: 5,
-    })],
+    }), VerificationModule, MailerModule, ThrottlerModule.forRoot()],
     providers: [AuthService, LocalStrategy],
     controllers: [AuthController]
 })
-export class AuthModule {
-
-}
+export class AuthModule { }

@@ -53,4 +53,12 @@ export class MailerService {
         await this.mailerBoilerplate({ email, subject, output })
         return;
     }
+
+
+    async passwordReset(email: string) {
+        const output = `<b>You just changed your password</b>`;
+        const subject = "Great From Instello"
+        await this.mailerBoilerplate({ email, subject, output })
+        return;
+    }
 }
