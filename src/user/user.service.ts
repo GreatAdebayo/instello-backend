@@ -1,15 +1,16 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { CACHE_MANAGER, ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { SignUpDto } from 'src/signup/dto/signup.dto';
+import { UserDto } from 'src/signup/dto/user.dto';
 import { FollowDto } from './dto/follow.dto';
 import { ResponseDto } from './dto/response.dto';
-
+import { Cache } from 'cache-manager'
 @Injectable()
 export class UserService {
-    constructor(@InjectModel('User') private readonly userModel: Model<SignUpDto>,
+    constructor(@InjectModel('User') private readonly userModel: Model<UserDto>,
         @InjectModel('Follow') private readonly followModel: Model<FollowDto>,
-        @InjectModel('Post') private readonly postModel: Model<FollowDto>) { }//change later to postdto
+        @InjectModel('Post') private readonly postModel: Model<FollowDto>,//change later to postdto
+        @Inject(CACHE_MANAGER) private readonly cacheManager: Cache) { }
 
     async privateUserInfo(userid: string) {
         let response: ResponseDto;
@@ -22,17 +23,32 @@ export class UserService {
                 isSuccess: false
             }
 
+            //fetch cached user info
+            const cachedItem = await this.cacheManager.get("cached_item")
+
+            if (cachedItem) return response = {
+                message: "user info succefully fetched",
+                status: 200,
+                isSuccess: true,
+                data: cachedItem
+            }
+
             //fetch number of follower
-            const followers = await this.followModel.find({ "following.id": userid });
-            user.noOfFollowers = followers.length;
+            const followers = await this.followModel.find({ "following.id": userid }).select("-following");
+            user.followers = followers;
 
             //fetch number of following
-            const following = await this.followModel.find({ "follower.id": userid });
-            user.noOfFollowing = following.length
+            const following = await this.followModel.find({ "follower.id": userid }).select("-follower");
+            user.following = following;
 
-            //fetch number of post
+
+            //fetched number of posts
             const posts = await this.postModel.find({ user: userid })
-            user.noOfPosts = posts.length
+            user.noOfposts = posts.length;
+
+
+            //cache user data
+            await this.cacheManager.set("cached_item", user)
             return response = {
                 message: "user info succefully fetched",
                 status: 200,

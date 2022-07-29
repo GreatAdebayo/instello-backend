@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SignupController = void 0;
 const common_1 = require("@nestjs/common");
 const sendcode_dto_1 = require("./dto/sendcode.dto");
-const signup_dto_1 = require("./dto/signup.dto");
+const user_dto_1 = require("./dto/user.dto");
 const verify_dto_1 = require("./dto/verify.dto");
 const signup_service_1 = require("./signup.service");
 const throttler_1 = require("@nestjs/throttler");
@@ -43,7 +43,7 @@ __decorate([
     __param(1, (0, common_1.Res)()),
     __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [signup_dto_1.SignUpDto, Object, Object]),
+    __metadata("design:paramtypes", [user_dto_1.UserDto, Object, Object]),
     __metadata("design:returntype", Promise)
 ], SignupController.prototype, "defaultSignup", null);
 __decorate([

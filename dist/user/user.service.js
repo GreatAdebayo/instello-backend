@@ -17,10 +17,11 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 let UserService = class UserService {
-    constructor(userModel, followModel, postModel) {
+    constructor(userModel, followModel, postModel, cacheManager) {
         this.userModel = userModel;
         this.followModel = followModel;
         this.postModel = postModel;
+        this.cacheManager = cacheManager;
     }
     async privateUserInfo(userid) {
         let response;
@@ -33,12 +34,21 @@ let UserService = class UserService {
                     status: 400,
                     isSuccess: false
                 };
-            const followers = await this.followModel.find({ "following.id": userid });
-            user.noOfFollowers = followers.length;
-            const following = await this.followModel.find({ "follower.id": userid });
-            user.noOfFollowing = following.length;
+            const cachedItem = await this.cacheManager.get("cached_item");
+            if (cachedItem)
+                return response = {
+                    message: "user info succefully fetched",
+                    status: 200,
+                    isSuccess: true,
+                    data: cachedItem
+                };
+            const followers = await this.followModel.find({ "following.id": userid }).select("-following");
+            user.followers = followers;
+            const following = await this.followModel.find({ "follower.id": userid }).select("-follower");
+            user.following = following;
             const posts = await this.postModel.find({ user: userid });
-            user.noOfPosts = posts.length;
+            user.noOfposts = posts.length;
+            await this.cacheManager.set("cached_item", user);
             return response = {
                 message: "user info succefully fetched",
                 status: 200,
@@ -56,9 +66,10 @@ UserService = __decorate([
     __param(0, (0, mongoose_1.InjectModel)('User')),
     __param(1, (0, mongoose_1.InjectModel)('Follow')),
     __param(2, (0, mongoose_1.InjectModel)('Post')),
+    __param(3, (0, common_1.Inject)(common_1.CACHE_MANAGER)),
     __metadata("design:paramtypes", [mongoose_2.Model,
         mongoose_2.Model,
-        mongoose_2.Model])
+        mongoose_2.Model, Object])
 ], UserService);
 exports.UserService = UserService;
 //# sourceMappingURL=user.service.js.map

@@ -23,7 +23,7 @@
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose/types/inferschematype" />
 import { Model } from "mongoose";
-import { SignUpDto } from "src/signup/dto/signup.dto";
+import { UserDto } from "src/signup/dto/user.dto";
 import { JwtService } from "@nestjs/jwt";
 import { VerficationService } from "src/verificationcode/verificationcode.service";
 import { VerifyDto } from "./dto/verify.dto";
@@ -34,8 +34,8 @@ export declare class AuthService {
     private readonly jwtService;
     private verificationService;
     private mailerService;
-    constructor(userModel: Model<SignUpDto>, verificationCodeModel: Model<VerifyDto>, jwtService: JwtService, verificationService: VerficationService, mailerService: MailerService);
-    validateUser(email: string, password: string): Promise<import("mongoose").Document<unknown, any, SignUpDto> & SignUpDto & {
+    constructor(userModel: Model<UserDto>, verificationCodeModel: Model<VerifyDto>, jwtService: JwtService, verificationService: VerficationService, mailerService: MailerService);
+    validateUser(email: string, password: string): Promise<import("mongoose").Document<unknown, any, UserDto> & UserDto & {
         _id: import("mongoose").Types.ObjectId;
     }>;
     signIn(user: any, ip: string): Promise<{

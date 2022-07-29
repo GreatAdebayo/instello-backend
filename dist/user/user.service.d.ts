@@ -1,11 +1,13 @@
 import { Model } from 'mongoose';
-import { SignUpDto } from 'src/signup/dto/signup.dto';
+import { UserDto } from 'src/signup/dto/user.dto';
 import { FollowDto } from './dto/follow.dto';
+import { Cache } from 'cache-manager';
 export declare class UserService {
     private readonly userModel;
     private readonly followModel;
     private readonly postModel;
-    constructor(userModel: Model<SignUpDto>, followModel: Model<FollowDto>, postModel: Model<FollowDto>);
+    private readonly cacheManager;
+    constructor(userModel: Model<UserDto>, followModel: Model<FollowDto>, postModel: Model<FollowDto>, cacheManager: Cache);
     privateUserInfo(userid: string): Promise<{
         message: string;
         status: number;
@@ -15,8 +17,6 @@ export declare class UserService {
         message: string;
         status: number;
         isSuccess: true;
-        data: import("mongoose").Document<unknown, any, SignUpDto> & SignUpDto & {
-            _id: import("mongoose").Types.ObjectId;
-        };
+        data: unknown;
     }>;
 }

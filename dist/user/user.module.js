@@ -15,6 +15,7 @@ const mongoose_1 = require("@nestjs/mongoose");
 const user_schema_1 = require("../schema/user.schema");
 const follow_schema_1 = require("../schema/follow.schema");
 const post_schema_1 = require("../schema/post.schema");
+const redisStore = require("cache-manager-redis-store");
 let UserModule = class UserModule {
 };
 UserModule = __decorate([
@@ -23,7 +24,12 @@ UserModule = __decorate([
                 { name: 'User', schema: user_schema_1.UserSchema },
                 { name: 'Follow', schema: follow_schema_1.FollowSchema },
                 { name: 'Post', schema: post_schema_1.PostSchema },
-            ])],
+            ]), common_1.CacheModule.register({
+                ttl: 900, store: redisStore, socket: {
+                    host: 'localhost',
+                    port: 6379
+                }
+            })],
         providers: [user_service_1.UserService, jwt_strategy_1.JwtStrategy],
         controllers: [user_controller_1.UserController]
     })

@@ -7,13 +7,13 @@ export declare const UserSchema: mongoose.Schema<any, mongoose.Model<any, any, a
     bio: string;
     email_verified: boolean;
     device_verified: boolean;
+    following: mongoose.Types.DocumentArray<any> | any[];
+    followers: mongoose.Types.DocumentArray<any> | any[];
     ip: {
         type?: string;
         required?: unknown;
     }[];
     userName?: string;
     profilePicture?: string;
-    noOfFollowing?: number;
-    noOfFollowers?: number;
-    noOfPosts?: number;
+    noOfposts?: number;
 }>;

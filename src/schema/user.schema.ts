@@ -38,13 +38,9 @@ export const UserSchema = new Schema({
         type: Boolean,
         default: true
     },
-    noOfFollowing: {
-        type: Number
-    },
-    noOfFollowers: {
-        type: Number
-    },
-    noOfPosts: {
+    following: [],
+    followers: [],
+    noOfposts: {
         type: Number
     },
     ip: [

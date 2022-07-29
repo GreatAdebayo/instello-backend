@@ -9,31 +9,31 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SignUpDto = void 0;
+exports.UserDto = void 0;
 const class_validator_1 = require("class-validator");
-class SignUpDto {
+class UserDto {
 }
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], SignUpDto.prototype, "firstName", void 0);
+], UserDto.prototype, "firstName", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], SignUpDto.prototype, "lastName", void 0);
+], UserDto.prototype, "lastName", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsEmail)(),
     __metadata("design:type", String)
-], SignUpDto.prototype, "email", void 0);
+], UserDto.prototype, "email", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.MinLength)(8),
     (0, class_validator_1.Matches)(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, { message: 'password too weak' }),
     __metadata("design:type", String)
-], SignUpDto.prototype, "password", void 0);
-exports.SignUpDto = SignUpDto;
+], UserDto.prototype, "password", void 0);
+exports.UserDto = UserDto;
 //# sourceMappingURL=signup.dto.js.map

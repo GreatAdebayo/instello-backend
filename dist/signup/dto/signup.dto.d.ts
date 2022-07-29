@@ -1,4 +1,5 @@
-export declare class SignUpDto {
+import { FollowDto } from "src/user/dto/follow.dto";
+export declare class UserDto {
     firstName: string;
     lastName: string;
     email: string;
@@ -7,7 +8,7 @@ export declare class SignUpDto {
     ip: string[];
     email_verified: boolean;
     device_verified: boolean;
-    noOfFollowers: number;
-    noOfFollowing: number;
-    noOfPosts: number;
+    followers: FollowDto[];
+    following: FollowDto[];
+    noOfposts: number;
 }

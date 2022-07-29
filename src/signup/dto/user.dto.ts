@@ -1,7 +1,8 @@
 import { IsEmail, IsNotEmpty, IsString, Matches, MinLength } from "class-validator"
+import { FollowDto } from "src/user/dto/follow.dto"
 
 
-export class SignUpDto {
+export class UserDto {
     @IsNotEmpty()
     @IsString()
     firstName: string
@@ -25,7 +26,7 @@ export class SignUpDto {
     ip: string[]
     email_verified: boolean
     device_verified: boolean
-    noOfFollowers: number
-    noOfFollowing: number
-    noOfPosts: number
+    followers: FollowDto[]
+    following: FollowDto[]
+    noOfposts: number
 }

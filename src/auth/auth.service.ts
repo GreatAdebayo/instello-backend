@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { SignUpDto } from "src/signup/dto/signup.dto";
+import { UserDto } from "src/signup/dto/user.dto";
 import * as bcrypt from 'bcrypt';
 import { JwtService } from "@nestjs/jwt";
 import { ResponseDto } from "./dto/response.dto";
@@ -12,7 +12,7 @@ import { MailerService } from "src/mailer/mailer.service";
 
 @Injectable()
 export class AuthService {
-    constructor(@InjectModel('User') private readonly userModel: Model<SignUpDto>,
+    constructor(@InjectModel('User') private readonly userModel: Model<UserDto>,
         @InjectModel('VerificationCode') private readonly verificationCodeModel: Model<VerifyDto>,
         private readonly jwtService: JwtService,
         private verificationService: VerficationService,

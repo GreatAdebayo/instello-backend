@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { ResponseDto } from "./dto/response.dto";
-import { SignUpDto } from "./dto/signup.dto";
+import { UserDto } from "./dto/user.dto";
 import * as bcrypt from 'bcrypt';
 import { VerficationService } from "src/verificationcode/verificationcode.service";
 import { VerifyDto } from "./dto/verify.dto";
@@ -13,7 +13,7 @@ import { MailerService } from "src/mailer/mailer.service";
 
 @Injectable({})
 export class SignupService {
-    constructor(@InjectModel('User') private readonly userModel: Model<SignUpDto>,
+    constructor(@InjectModel('User') private readonly userModel: Model<UserDto>,
         @InjectModel('VerificationCode') private readonly verificationCodeModel: Model<VerifyDto>,
         private verificationService: VerficationService,
         private jwtService: JwtService,
@@ -38,7 +38,7 @@ export class SignupService {
 
 
 
-    async defaultSignup({ firstName, lastName, email, password }: SignUpDto, ip: string) {
+    async defaultSignup({ firstName, lastName, email, password }: UserDto, ip: string) {
         let response: ResponseDto;
         //check if email already exists
         if (await this.checkUser(email)) {
