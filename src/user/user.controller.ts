@@ -1,4 +1,4 @@
-import { CacheInterceptor, Controller, Get, Request, Res, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Request, Res, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from './user.service';
 

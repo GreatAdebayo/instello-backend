@@ -8,6 +8,31 @@ exports.PostSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User",
         required: true,
-    }
+    },
+    caption: {
+        type: String
+    },
+    access: {
+        type: String,
+        required: true
+    },
+    media: [
+        {
+            url: String,
+            cloudinary_id: String,
+        },
+    ],
+    comment: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Comment",
+        },
+    ],
+    like: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Like",
+        },
+    ],
 }, { timestamps: true });
 //# sourceMappingURL=post.schema.js.map

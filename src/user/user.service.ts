@@ -5,12 +5,14 @@ import { UserDto } from 'src/signup/dto/user.dto';
 import { FollowDto } from './dto/follow.dto';
 import { ResponseDto } from './dto/response.dto';
 import { Cache } from 'cache-manager'
+import { PostDto } from 'src/post/dto/post.dto';
 @Injectable()
 export class UserService {
     constructor(@InjectModel('User') private readonly userModel: Model<UserDto>,
         @InjectModel('Follow') private readonly followModel: Model<FollowDto>,
-        @InjectModel('Post') private readonly postModel: Model<FollowDto>,//change later to postdto
+        @InjectModel('Post') private readonly postModel: Model<PostDto>,
         @Inject(CACHE_MANAGER) private readonly cacheManager: Cache) { }
+
 
     async privateUserInfo(userid: string) {
         let response: ResponseDto;
@@ -24,7 +26,7 @@ export class UserService {
             }
 
             //fetch cached user info
-            const cachedItem = await this.cacheManager.get("cached_item")
+            const cachedItem = await this.cacheManager.get("user_info")
 
             if (cachedItem) return response = {
                 message: "user info succefully fetched",
@@ -48,7 +50,7 @@ export class UserService {
 
 
             //cache user data
-            await this.cacheManager.set("cached_item", user)
+            await this.cacheManager.set("user_info", user)
             return response = {
                 message: "user info succefully fetched",
                 status: 200,

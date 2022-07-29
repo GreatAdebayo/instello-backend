@@ -1,15 +1,14 @@
 import { Model } from 'mongoose';
 import { UserDto } from 'src/signup/dto/user.dto';
-import { FollowDto } from './dto/follow.dto';
+import { PostDto } from './dto/post.dto';
 import { Cache } from 'cache-manager';
-import { PostDto } from 'src/post/dto/post.dto';
-export declare class UserService {
+export declare class PostService {
     private readonly userModel;
-    private readonly followModel;
     private readonly postModel;
+    private readonly commentModel;
     private readonly cacheManager;
-    constructor(userModel: Model<UserDto>, followModel: Model<FollowDto>, postModel: Model<PostDto>, cacheManager: Cache);
-    privateUserInfo(userid: string): Promise<{
+    constructor(userModel: Model<UserDto>, postModel: Model<PostDto>, commentModel: Model<PostDto>, cacheManager: Cache);
+    getPost(userid: string): Promise<{
         message: string;
         status: number;
         isSuccess: false;
@@ -20,4 +19,5 @@ export declare class UserService {
         isSuccess: true;
         data: unknown;
     }>;
+    createPost(): Promise<void>;
 }

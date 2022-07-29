@@ -7,10 +7,12 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { PasswordresetModule } from './passwordreset/passwordreset.module';
+import { PostModule } from './post/post.module';
+
 
 @Module({
   imports: [SignupModule, MongooseModule.forRoot('mongodb+srv://great:8AYkra15GXQJjimm@shop.wej5v.mongodb.net/instello?retryWrites=true&w=majority'),
-    ConfigModule.forRoot({ isGlobal: true }), AuthModule, UserModule, PasswordresetModule],
+    ConfigModule.forRoot({ isGlobal: true }), AuthModule, UserModule, PasswordresetModule, PostModule],
   controllers: [AppController],
   providers: [AppService],
 })

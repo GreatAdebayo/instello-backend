@@ -12,64 +12,62 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserService = void 0;
+exports.PostService = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
-let UserService = class UserService {
-    constructor(userModel, followModel, postModel, cacheManager) {
+let PostService = class PostService {
+    constructor(userModel, postModel, commentModel, cacheManager) {
         this.userModel = userModel;
-        this.followModel = followModel;
         this.postModel = postModel;
+        this.commentModel = commentModel;
         this.cacheManager = cacheManager;
     }
-    async privateUserInfo(userid) {
+    async getPost(userid) {
         let response;
         try {
-            const user = await this.userModel.findById(userid).select(`-password -createdAt -updatedAt 
-            -ip -device_verified`);
+            const user = await this.userModel.findById(userid);
             if (!user)
                 return response = {
                     message: "user not found",
                     status: 400,
                     isSuccess: false
                 };
-            const cachedItem = await this.cacheManager.get("user_info");
+            const cachedItem = await this.cacheManager.get("user_post");
             if (cachedItem)
                 return response = {
-                    message: "user info succefully fetched",
+                    message: "posts succefully fetched",
                     status: 200,
                     isSuccess: true,
                     data: cachedItem
                 };
-            const followers = await this.followModel.find({ "following.id": userid }).select("-following");
-            user.followers = followers;
-            const following = await this.followModel.find({ "follower.id": userid }).select("-follower");
-            user.following = following;
-            const posts = await this.postModel.find({ user: userid });
-            user.noOfposts = posts.length;
-            await this.cacheManager.set("user_info", user);
+            const posts = await this.postModel.find({ user: userid }).populate({
+                path: "comment",
+                model: "Comment",
+            });
+            await this.cacheManager.set("user_post", posts);
             return response = {
-                message: "user info succefully fetched",
+                message: "posts succefully fetched",
                 status: 200,
                 isSuccess: true,
-                data: user
+                data: posts
             };
         }
         catch (error) {
             throw new common_1.ForbiddenException('something is wrong!');
         }
     }
+    async createPost() { }
 };
-UserService = __decorate([
+PostService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)('User')),
-    __param(1, (0, mongoose_1.InjectModel)('Follow')),
-    __param(2, (0, mongoose_1.InjectModel)('Post')),
+    __param(1, (0, mongoose_1.InjectModel)('Post')),
+    __param(2, (0, mongoose_1.InjectModel)('Comment')),
     __param(3, (0, common_1.Inject)(common_1.CACHE_MANAGER)),
     __metadata("design:paramtypes", [mongoose_2.Model,
         mongoose_2.Model,
         mongoose_2.Model, Object])
-], UserService);
-exports.UserService = UserService;
-//# sourceMappingURL=user.service.js.map
+], PostService);
+exports.PostService = PostService;
+//# sourceMappingURL=post.service.js.map

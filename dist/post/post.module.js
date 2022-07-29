@@ -6,33 +6,33 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserModule = void 0;
+exports.PostModule = void 0;
 const common_1 = require("@nestjs/common");
-const user_service_1 = require("./user.service");
-const user_controller_1 = require("./user.controller");
 const jwt_strategy_1 = require("../jwt/jwt.strategy");
+const post_controller_1 = require("./post.controller");
+const post_service_1 = require("./post.service");
 const mongoose_1 = require("@nestjs/mongoose");
 const user_schema_1 = require("../schema/user.schema");
-const follow_schema_1 = require("../schema/follow.schema");
 const post_schema_1 = require("../schema/post.schema");
+const comment_schema_1 = require("../schema/comment.schema");
 const redisStore = require("cache-manager-redis-store");
-let UserModule = class UserModule {
+let PostModule = class PostModule {
 };
-UserModule = __decorate([
+PostModule = __decorate([
     (0, common_1.Module)({
         imports: [mongoose_1.MongooseModule.forFeature([
                 { name: 'User', schema: user_schema_1.UserSchema },
-                { name: 'Follow', schema: follow_schema_1.FollowSchema },
                 { name: 'Post', schema: post_schema_1.PostSchema },
+                { name: 'Comment', schema: comment_schema_1.CommentSchema },
             ]), common_1.CacheModule.register({
                 ttl: 30, store: redisStore, socket: {
                     host: 'localhost',
                     port: 6379
                 }
             })],
-        providers: [user_service_1.UserService, jwt_strategy_1.JwtStrategy],
-        controllers: [user_controller_1.UserController]
+        controllers: [post_controller_1.PostController],
+        providers: [post_service_1.PostService, jwt_strategy_1.JwtStrategy]
     })
-], UserModule);
-exports.UserModule = UserModule;
-//# sourceMappingURL=user.module.js.map
+], PostModule);
+exports.PostModule = PostModule;
+//# sourceMappingURL=post.module.js.map
