@@ -5,6 +5,10 @@ import { FollowDto } from "src/user/dto/follow.dto"
 export class UserDto {
     @IsNotEmpty()
     @IsString()
+    userName: string
+
+    @IsNotEmpty()
+    @IsString()
     firstName: string
 
     @IsNotEmpty()
@@ -22,7 +26,6 @@ export class UserDto {
     @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, { message: 'password too weak' })
     password: string
 
-    userName: string
     ip: string[]
     email_verified: boolean
     device_verified: boolean

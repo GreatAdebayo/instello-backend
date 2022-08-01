@@ -11,6 +11,9 @@ import { MailerService } from "src/mailer/mailer.service";
 
 
 
+
+
+
 @Injectable({})
 export class SignupService {
     constructor(@InjectModel('User') private readonly userModel: Model<UserDto>,
@@ -22,7 +25,7 @@ export class SignupService {
 
 
 
-    private async checkUser(email: string) {
+    private async checkEmail(email: string) {
         try {
             const user = await this.userModel.findOne({ email }).select("-password");
             if (user)
@@ -36,56 +39,79 @@ export class SignupService {
 
 
 
+    private async checkUsername(userName: string) {
+        try {
+            const user = await this.userModel.findOne({ userName })
+            if (user)
+                return user
+
+            return false;
+        } catch (error) {
+            throw new ForbiddenException('something is wrong!')
+        }
+
+    }
 
 
-    async defaultSignup({ firstName, lastName, email, password }: UserDto, ip: string) {
+
+
+    async defaultSignup({ userName, firstName, lastName, email, password }: UserDto, ip: string) {
         let response: ResponseDto;
         //check if email already exists
-        if (await this.checkUser(email)) {
+        if (await this.checkEmail(email))
             return response = {
                 message: "email already in use",
                 status: 400,
                 isSuccess: false
             }
-        } else {
-            //encrypt password
-            const salt = 10;
-            const hashedPassword = await bcrypt.hash(password, salt);
 
-            //insert details into db
-            try {
-                const user = new this.userModel({
-                    userName: lastName,
-                    firstName,
-                    lastName,
-                    email,
-                    password: hashedPassword
-                });
-                user.ip.push(ip)
-                await user.save();
-
-
-                //send verification code
-                await this.verificationService.sendVerificationCode({ email: user.email, id: user._id })
-                return response = {
-                    message: "a 4-digit code was sent to your email, please verify your email",
-                    data: user.email,
-                    status: 200,
-                    isSuccess: true
-                }
-            } catch (error) {
-                throw new ForbiddenException('something is wrong!')
-            }
+        //check if username already exists
+        if (await this.checkUsername(userName)) return response = {
+            message: "username taken",
+            status: 400,
+            isSuccess: false
         }
 
+        //encrypt password
+        const salt = 10;
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        //insert details into db
+        try {
+            const user = new this.userModel({
+                userName,
+                firstName,
+                lastName,
+                email,
+                password: hashedPassword
+            });
+            user.ip.push(ip)
+            await user.save();
+
+
+            //send verification code
+            await this.verificationService.sendVerificationCode({ email: user.email, id: user._id })
+            return response = {
+                message: "a 4-digit code was sent to your email, please verify your email",
+                data: user.email,
+                status: 200,
+                isSuccess: true
+            }
+        } catch (error) {
+            throw new ForbiddenException('something is wrong!')
+        }
+
+
     }
+
+
 
 
     async verify({ email, code }: VerifyDto) {
         let response: ResponseDto;
         try {
             //check if email exists
-            const user = await this.checkUser(email)
+            const user = await this.checkEmail(email)
             if (!user) return response = {
                 message: "email not found",
                 status: 400,
@@ -105,6 +131,7 @@ export class SignupService {
                 user: user._id,
                 code
             });
+
 
             if (!checkCode) return response = {
                 message: "incorrect code",
@@ -128,7 +155,7 @@ export class SignupService {
                     }
                 );
 
-                // generate JWT 
+                //generate JWT 
                 const payload = { sub: user._id };
 
                 //send welcome message
@@ -154,11 +181,13 @@ export class SignupService {
 
 
 
+
+
     async resendCode({ email }) {
         let response: ResponseDto;
         try {
             //check if email exists
-            const user = await this.checkUser(email)
+            const user = await this.checkEmail(email)
             if (!user) return response = {
                 message: "email not found",
                 status: 400,
@@ -178,3 +207,9 @@ export class SignupService {
         }
     }
 }
+
+
+
+
+
+

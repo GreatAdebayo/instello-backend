@@ -20,21 +20,22 @@ let PostController = class PostController {
     constructor(postService) {
         this.postService = postService;
     }
-    async getPost(req, res) {
-        const response = await this.postService.getPost(req.user.id);
+    async getPrivatePost(req, res) {
+        const response = await this.postService.getPrivatePost(req.user.id);
         return res.status(response.status).json(response);
     }
     async createPost() { }
+    async getPublicPost() { }
 };
 __decorate([
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
-    (0, common_1.Get)(),
+    (0, common_1.Get)('private'),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
-], PostController.prototype, "getPost", null);
+], PostController.prototype, "getPrivatePost", null);
 __decorate([
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, common_1.Post)(),
@@ -42,6 +43,13 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], PostController.prototype, "createPost", null);
+__decorate([
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, common_1.Get)('public'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], PostController.prototype, "getPublicPost", null);
 PostController = __decorate([
     (0, common_1.Controller)('api/post'),
     __metadata("design:paramtypes", [post_service_1.PostService])

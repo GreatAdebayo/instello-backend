@@ -20,4 +20,32 @@ export declare class UserService {
         isSuccess: true;
         data: unknown;
     }>;
+    publicUserInfo(username: string): Promise<{
+        message: string;
+        status: number;
+        isSuccess: false;
+        data?: undefined;
+    } | {
+        message: string;
+        status: number;
+        isSuccess: true;
+        data: unknown;
+    }>;
+    searchUser({ page, limit, username }: {
+        page: number;
+        limit: number;
+        username: string;
+    }): Promise<{
+        message: string;
+        status: number;
+        isSuccess: false;
+        data?: undefined;
+    } | {
+        message: string;
+        status: number;
+        isSuccess: true;
+        data: (import("mongoose").Document<unknown, any, UserDto> & UserDto & {
+            _id: import("mongoose").Types.ObjectId;
+        })[];
+    }>;
 }

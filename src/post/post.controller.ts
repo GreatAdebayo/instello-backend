@@ -9,13 +9,20 @@ export class PostController {
     constructor(private readonly postService: PostService) { }
 
     @UseGuards(AuthGuard('jwt'))
-    @Get()
-    async getPost(@Request() req, @Res() res) {
-        const response = await this.postService.getPost(req.user.id)
+    @Get('private')
+    async getPrivatePost(@Request() req, @Res() res) {
+        const response = await this.postService.getPrivatePost(req.user.id)
         return res.status(response.status).json(response)
     }
 
     @UseGuards(AuthGuard('jwt'))
     @Post()
     async createPost() { }
+
+
+    //middleware should be here
+    //parameter of username
+    @UseGuards(AuthGuard('jwt'))
+    @Get('public')
+    async getPublicPost() { }
 }

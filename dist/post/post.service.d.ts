@@ -8,7 +8,7 @@ export declare class PostService {
     private readonly commentModel;
     private readonly cacheManager;
     constructor(userModel: Model<UserDto>, postModel: Model<PostDto>, commentModel: Model<PostDto>, cacheManager: Cache);
-    getPost(userid: string): Promise<{
+    getPrivatePost(userid: string): Promise<{
         message: string;
         status: number;
         isSuccess: false;

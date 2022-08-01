@@ -23,7 +23,7 @@ let PostService = class PostService {
         this.commentModel = commentModel;
         this.cacheManager = cacheManager;
     }
-    async getPost(userid) {
+    async getPrivatePost(userid) {
         let response;
         try {
             const user = await this.userModel.findById(userid);
@@ -33,7 +33,7 @@ let PostService = class PostService {
                     status: 400,
                     isSuccess: false
                 };
-            const cachedItem = await this.cacheManager.get("user_post");
+            const cachedItem = await this.cacheManager.get("private_user_post");
             if (cachedItem)
                 return response = {
                     message: "posts succefully fetched",
@@ -45,7 +45,7 @@ let PostService = class PostService {
                 path: "comment",
                 model: "Comment",
             });
-            await this.cacheManager.set("user_post", posts);
+            await this.cacheManager.set("private_user_post", posts);
             return response = {
                 message: "posts succefully fetched",
                 status: 200,

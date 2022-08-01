@@ -15,7 +15,7 @@ export class PostService {
         @Inject(CACHE_MANAGER) private readonly cacheManager: Cache) { }
 
 
-    async getPost(userid: string) {
+    async getPrivatePost(userid: string) {
         let response: ResponseDto;
         try {
             const user = await this.userModel.findById(userid);
@@ -26,7 +26,7 @@ export class PostService {
             }
 
             //fetch cached user info
-            const cachedItem = await this.cacheManager.get("user_post")
+            const cachedItem = await this.cacheManager.get("private_user_post")
             if (cachedItem) return response = {
                 message: "posts succefully fetched",
                 status: 200,
@@ -40,9 +40,11 @@ export class PostService {
                 model: "Comment",
             })
 
+            //pagination later
+
 
             //cache user data
-            await this.cacheManager.set("user_post", posts)
+            await this.cacheManager.set("private_user_post", posts)
             return response = {
                 message: "posts succefully fetched",
                 status: 200,

@@ -11,8 +11,9 @@ export declare class SignupService {
     private readonly jwtService;
     private readonly mailerService;
     constructor(userModel: Model<UserDto>, verificationCodeModel: Model<VerifyDto>, verificationService: VerficationService, jwtService: JwtService, mailerService: MailerService);
-    private checkUser;
-    defaultSignup({ firstName, lastName, email, password }: UserDto, ip: string): Promise<{
+    private checkEmail;
+    private checkUsername;
+    defaultSignup({ userName, firstName, lastName, email, password }: UserDto, ip: string): Promise<{
         message: string;
         status: number;
         isSuccess: false;

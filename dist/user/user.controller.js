@@ -16,6 +16,7 @@ exports.UserController = void 0;
 const common_1 = require("@nestjs/common");
 const passport_1 = require("@nestjs/passport");
 const user_service_1 = require("./user.service");
+const throttler_1 = require("@nestjs/throttler");
 let UserController = class UserController {
     constructor(userService) {
         this.userService = userService;
@@ -24,7 +25,13 @@ let UserController = class UserController {
         const response = await this.userService.privateUserInfo(req.user.id);
         return res.status(response.status).json(response);
     }
-    async publiceUserInfo(req, res) {
+    async publiceUserInfo(username, res) {
+        const response = await this.userService.publicUserInfo(username);
+        return res.status(response.status).json(response);
+    }
+    async searchUser(res, page = 1, limit = 5, username) {
+        const response = await this.userService.searchUser({ page, limit, username });
+        return res.status(response.status).json(response);
     }
 };
 __decorate([
@@ -37,13 +44,25 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "privateUserInfo", null);
 __decorate([
-    (0, common_1.Get)('public'),
-    __param(0, (0, common_1.Request)()),
+    (0, common_1.Get)('public/:username'),
+    __param(0, (0, common_1.Param)("username")),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "publiceUserInfo", null);
+__decorate([
+    (0, common_1.UseGuards)(throttler_1.ThrottlerGuard),
+    (0, throttler_1.Throttle)(1, 1),
+    (0, common_1.Get)('search'),
+    __param(0, (0, common_1.Res)()),
+    __param(1, (0, common_1.Query)('page')),
+    __param(2, (0, common_1.Query)('limit')),
+    __param(3, (0, common_1.Query)('username')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Number, Number, String]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "searchUser", null);
 UserController = __decorate([
     (0, common_1.Controller)('api/userinfo'),
     __metadata("design:paramtypes", [user_service_1.UserService])

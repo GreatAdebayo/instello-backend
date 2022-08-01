@@ -28,7 +28,7 @@ let SignupService = class SignupService {
         this.jwtService = jwtService;
         this.mailerService = mailerService;
     }
-    async checkUser(email) {
+    async checkEmail(email) {
         try {
             const user = await this.userModel.findOne({ email }).select("-password");
             if (user)
@@ -39,45 +39,59 @@ let SignupService = class SignupService {
             throw new common_1.ForbiddenException('something is wrong!');
         }
     }
-    async defaultSignup({ firstName, lastName, email, password }, ip) {
+    async checkUsername(userName) {
+        try {
+            const user = await this.userModel.findOne({ userName });
+            if (user)
+                return user;
+            return false;
+        }
+        catch (error) {
+            throw new common_1.ForbiddenException('something is wrong!');
+        }
+    }
+    async defaultSignup({ userName, firstName, lastName, email, password }, ip) {
         let response;
-        if (await this.checkUser(email)) {
+        if (await this.checkEmail(email))
             return response = {
                 message: "email already in use",
                 status: 400,
                 isSuccess: false
             };
+        if (await this.checkUsername(userName))
+            return response = {
+                message: "username taken",
+                status: 400,
+                isSuccess: false
+            };
+        const salt = 10;
+        const hashedPassword = await bcrypt.hash(password, salt);
+        try {
+            const user = new this.userModel({
+                userName,
+                firstName,
+                lastName,
+                email,
+                password: hashedPassword
+            });
+            user.ip.push(ip);
+            await user.save();
+            await this.verificationService.sendVerificationCode({ email: user.email, id: user._id });
+            return response = {
+                message: "a 4-digit code was sent to your email, please verify your email",
+                data: user.email,
+                status: 200,
+                isSuccess: true
+            };
         }
-        else {
-            const salt = 10;
-            const hashedPassword = await bcrypt.hash(password, salt);
-            try {
-                const user = new this.userModel({
-                    userName: lastName,
-                    firstName,
-                    lastName,
-                    email,
-                    password: hashedPassword
-                });
-                user.ip.push(ip);
-                await user.save();
-                await this.verificationService.sendVerificationCode({ email: user.email, id: user._id });
-                return response = {
-                    message: "a 4-digit code was sent to your email, please verify your email",
-                    data: user.email,
-                    status: 200,
-                    isSuccess: true
-                };
-            }
-            catch (error) {
-                throw new common_1.ForbiddenException('something is wrong!');
-            }
+        catch (error) {
+            throw new common_1.ForbiddenException('something is wrong!');
         }
     }
     async verify({ email, code }) {
         let response;
         try {
-            const user = await this.checkUser(email);
+            const user = await this.checkEmail(email);
             if (!user)
                 return response = {
                     message: "email not found",
@@ -130,7 +144,7 @@ let SignupService = class SignupService {
     async resendCode({ email }) {
         let response;
         try {
-            const user = await this.checkUser(email);
+            const user = await this.checkEmail(email);
             if (!user)
                 return response = {
                     message: "email not found",

@@ -7,6 +7,7 @@ import { UserSchema } from 'src/schema/user.schema';
 import { FollowSchema } from 'src/schema/follow.schema';
 import { PostSchema } from 'src/schema/post.schema';
 import * as redisStore from "cache-manager-redis-store"
+import { ThrottlerModule } from '@nestjs/throttler';
 
 
 @Module({
@@ -19,7 +20,7 @@ import * as redisStore from "cache-manager-redis-store"
       host: 'localhost',
       port: 6379
     }
-  })],
+  }), ThrottlerModule.forRoot()],
   providers: [UserService, JwtStrategy],
   controllers: [UserController]
 })
