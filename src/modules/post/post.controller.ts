@@ -37,7 +37,7 @@ export class PostController {
 
 
     @UseGuards(AuthGuard('jwt'))
-    @Post('upload')
+    @Post()
     @UseInterceptors(FileInterceptor('file'))
     async uploadPost(@Body() body: PostDto, @UploadedFile(
     ) file: Express.Multer.File, @Request() req, @Res() res) {
@@ -50,7 +50,7 @@ export class PostController {
 
 
     @UseGuards(AuthGuard('jwt'))
-    @Delete('delete/:id')
+    @Delete('/:id')
     async deletePost(@Param("id") postid: Types.ObjectId, @Request() req, @Res() res) {
         const response: ResponseDto = await this.postService.deletePost(postid, req.user.id)
         return res.status(response.status).json(response)

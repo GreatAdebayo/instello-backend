@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, UseGuards, Req, Res } from '@nestjs/common';
+import { Body, Controller, Param, Post, UseGuards, Req, Res, Delete, Request } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CommentService } from './comment.service';
 import { CommentDto } from './dto/comment.dto';
@@ -18,4 +18,13 @@ export class CommentController {
         const response: ResponseDto = await this.commentService.postComment(body, postid, req.user.id);
         return res.status(response.status).json(response)
     }
+
+
+    @UseGuards(AuthGuard('jwt'))
+    @Delete('/:comid/:postid')
+    async deletePost(@Param() { comid, postid }, @Request() req, @Res() res) {
+        const response: ResponseDto = await this.commentService.deleteComment(comid, postid, req.user.id)
+        return res.status(response.status).json(response)
+    }
+
 }

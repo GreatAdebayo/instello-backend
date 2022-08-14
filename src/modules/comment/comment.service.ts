@@ -65,5 +65,52 @@ export class CommentService {
 
 
 
-    async deleteComment() { }
+    async deleteComment(comid: Types.ObjectId, postid: Types.ObjectId, userid: Types.ObjectId) {
+        try {
+            //check if user exists
+            const user = await this.middlewareService.checkUserExists(userid)
+
+            if (!user) return {
+                message: "user not found",
+                status: 400,
+                isSuccess: false
+            }
+
+
+
+            //check if comment exists and user owns it
+            const post = await this.commentModel.findOne({ _id: comid, user: userid, post: postid })
+            if (!post) return {
+                message: "comment not found",
+                status: 400,
+                isSuccess: false
+            }
+
+            // delete the post
+            await this.commentModel.deleteOne({ _id: comid })
+
+
+            await this.postModel.findByIdAndUpdate(
+                { _id: postid },
+                {
+                    $pull: {
+                        comments: comid,
+                    } as any,
+                }
+            )
+
+            return {
+                message: "comment deleted",
+                status: 200,
+                isSuccess: true
+            }
+
+        } catch (error) {
+            throw new HttpException({
+                status: HttpStatus.BAD_REQUEST,
+                error: error.message,
+            }, HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
