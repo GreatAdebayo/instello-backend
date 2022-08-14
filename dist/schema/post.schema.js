@@ -12,16 +12,20 @@ exports.PostSchema = new Schema({
     caption: {
         type: String
     },
-    access: {
-        type: String,
-        required: true
-    },
-    media: [
-        {
-            url: String,
-            cloudinary_id: String,
+    media: {
+        url: {
+            type: String,
+            required: true,
         },
-    ],
+        cloudinary_id: {
+            type: String,
+            required: true,
+        },
+        format: {
+            type: String,
+            required: true,
+        }
+    },
     comment: [
         {
             type: Schema.Types.ObjectId,
@@ -33,6 +37,6 @@ exports.PostSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: "Like",
         },
-    ],
+    ]
 }, { timestamps: true });
 //# sourceMappingURL=post.schema.js.map

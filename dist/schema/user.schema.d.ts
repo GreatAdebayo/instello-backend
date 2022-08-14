@@ -15,5 +15,9 @@ export declare const UserSchema: mongoose.Schema<any, mongoose.Model<any, any, a
         required?: unknown;
     }[];
     profilePicture?: string;
+    subscription?: {
+        mode: boolean;
+        duration?: string;
+    };
     noOfposts?: number;
 }>;

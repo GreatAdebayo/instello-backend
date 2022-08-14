@@ -16,6 +16,7 @@ const user_schema_1 = require("../schema/user.schema");
 const post_schema_1 = require("../schema/post.schema");
 const comment_schema_1 = require("../schema/comment.schema");
 const redisStore = require("cache-manager-redis-store");
+const subscription_schema_1 = require("../schema/subscription.schema");
 let PostModule = class PostModule {
 };
 PostModule = __decorate([
@@ -24,6 +25,7 @@ PostModule = __decorate([
                 { name: 'User', schema: user_schema_1.UserSchema },
                 { name: 'Post', schema: post_schema_1.PostSchema },
                 { name: 'Comment', schema: comment_schema_1.CommentSchema },
+                { name: 'Subscription', schema: subscription_schema_1.SubscriptionSchema },
             ]), common_1.CacheModule.register({
                 ttl: 30, store: redisStore, socket: {
                     host: 'localhost',

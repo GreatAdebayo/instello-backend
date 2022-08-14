@@ -16,38 +16,53 @@ exports.PostController = void 0;
 const common_1 = require("@nestjs/common");
 const post_service_1 = require("./post.service");
 const passport_1 = require("@nestjs/passport");
+const post_dto_1 = require("./dto/post.dto");
+const platform_express_1 = require("@nestjs/platform-express");
 let PostController = class PostController {
     constructor(postService) {
         this.postService = postService;
     }
-    async getPrivatePost(req, res) {
-        const response = await this.postService.getPrivatePost(req.user.id);
+    async getPrivatePost(req, res, limit = 8) {
+        const response = await this.postService.getPrivatePost({ userid: req.user.id, limit: 8 });
         return res.status(response.status).json(response);
     }
-    async createPost() { }
-    async getPublicPost() { }
+    async uploadPost(type, body, file) {
+        console.log(file);
+    }
+    async getPublicPost(req, username, res) {
+        const response = await this.postService.getPublicPost({ userid: req.user.id, username, limit: 8 });
+        return res.status(response.status).json(response);
+    }
 };
 __decorate([
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, common_1.Get)('private'),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Res)()),
+    __param(2, (0, common_1.Query)('limit')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [Object, Object, Number]),
     __metadata("design:returntype", Promise)
 ], PostController.prototype, "getPrivatePost", null);
 __decorate([
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
-    (0, common_1.Post)(),
+    (0, common_1.Post)('upload'),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
+    __param(0, (0, common_1.Query)()),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.UploadedFile)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [post_dto_1.PostQuery, post_dto_1.PostDto, Object]),
     __metadata("design:returntype", Promise)
-], PostController.prototype, "createPost", null);
+], PostController.prototype, "uploadPost", null);
 __decorate([
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
-    (0, common_1.Get)('public'),
+    (0, common_1.Get)('public/:username'),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Param)("username")),
+    __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object, String, Object]),
     __metadata("design:returntype", Promise)
 ], PostController.prototype, "getPublicPost", null);
 PostController = __decorate([

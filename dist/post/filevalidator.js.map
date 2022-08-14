@@ -1,0 +1,1 @@
+{"version":3,"file":"filevalidator.js","sourceRoot":"","sources":["../../src/post/filevalidator.ts"],"names":[],"mappings":";;;;;;;;;AAAA,2CAA6E;AAG7E,IAAa,sBAAsB,GAAnC,MAAa,sBAAsB;IAC/B,SAAS,CAAC,KAAU,EAAE,QAA0B;QAE5C,MAAM,KAAK,GAAG,IAAI,CAAC;QACnB,OAAO,KAAK,CAAC,IAAI,GAAG,KAAK,CAAC;IAC9B,CAAC;CACJ,CAAA;AANY,sBAAsB;IADlC,IAAA,mBAAU,GAAE;GACA,sBAAsB,CAMlC;AANY,wDAAsB"}

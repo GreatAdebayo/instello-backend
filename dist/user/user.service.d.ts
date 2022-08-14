@@ -1,8 +1,8 @@
 import { Model } from 'mongoose';
-import { UserDto } from 'src/signup/dto/user.dto';
+import { UserDto } from 'src/modules/signup/dto/user.dto';
 import { FollowDto } from './dto/follow.dto';
 import { Cache } from 'cache-manager';
-import { PostDto } from 'src/post/dto/post.dto';
+import { PostDto } from 'src/modules/post/dto/post.dto';
 export declare class UserService {
     private readonly userModel;
     private readonly followModel;

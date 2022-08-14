@@ -40,6 +40,15 @@ exports.UserSchema = new Schema({
         type: Boolean,
         default: true
     },
+    subscription: {
+        mode: {
+            type: Boolean,
+            default: false
+        },
+        duration: {
+            type: String
+        }
+    },
     following: [],
     followers: [],
     noOfposts: {

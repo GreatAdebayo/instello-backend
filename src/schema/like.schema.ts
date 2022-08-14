@@ -12,7 +12,7 @@ export const LikeSchema = new Schema(
         by: {
             type: Schema.Types.ObjectId,
             required: true,
-        },
+        }
     },
     { timestamps: true }
 );

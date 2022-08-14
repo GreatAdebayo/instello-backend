@@ -11,12 +11,12 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
-const signup_module_1 = require("./signup/signup.module");
+const signup_module_1 = require("./modules/signup/signup.module");
 const config_1 = require("@nestjs/config");
-const auth_module_1 = require("./auth/auth.module");
-const user_module_1 = require("./user/user.module");
-const passwordreset_module_1 = require("./passwordreset/passwordreset.module");
-const post_module_1 = require("./post/post.module");
+const auth_module_1 = require("./modules/auth/auth.module");
+const user_module_1 = require("./modules/user/user.module");
+const passwordreset_module_1 = require("./modules/passwordreset/passwordreset.module");
+const post_module_1 = require("./modules/post/post.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([

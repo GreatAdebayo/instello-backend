@@ -1,4 +1,8 @@
 import { FollowDto } from "src/user/dto/follow.dto";
+interface SubscriptionMode {
+    mode: boolean;
+    duration: string;
+}
 export declare class UserDto {
     userName: string;
     firstName: string;
@@ -11,4 +15,6 @@ export declare class UserDto {
     followers: FollowDto[];
     following: FollowDto[];
     noOfposts: number;
+    subscription: SubscriptionMode;
 }
+export {};

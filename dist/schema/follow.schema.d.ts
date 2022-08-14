@@ -6,7 +6,7 @@ export declare const FollowSchema: mongoose.Schema<any, mongoose.Model<any, any,
     };
     follower?: {
         id?: mongoose.Types.ObjectId;
-        profilePicture?: string;
         userName?: string;
+        profilePicture?: string;
     };
 }>;

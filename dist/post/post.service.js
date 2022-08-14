@@ -17,13 +17,14 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 let PostService = class PostService {
-    constructor(userModel, postModel, commentModel, cacheManager) {
+    constructor(userModel, postModel, commentModel, subscriptionModel, cacheManager) {
         this.userModel = userModel;
         this.postModel = postModel;
         this.commentModel = commentModel;
+        this.subscriptionModel = subscriptionModel;
         this.cacheManager = cacheManager;
     }
-    async getPrivatePost(userid) {
+    async getPrivatePost({ userid, limit }) {
         let response;
         try {
             const user = await this.userModel.findById(userid);
@@ -44,7 +45,16 @@ let PostService = class PostService {
             const posts = await this.postModel.find({ user: userid }).populate({
                 path: "comment",
                 model: "Comment",
-            });
+                options: {
+                    limit: limit || 8
+                }
+            }).limit(limit || 8);
+            if (posts.length < 1)
+                return response = {
+                    message: "no post yet",
+                    status: 200,
+                    isSuccess: false
+                };
             await this.cacheManager.set("private_user_post", posts);
             return response = {
                 message: "posts succefully fetched",
@@ -57,15 +67,82 @@ let PostService = class PostService {
             throw new common_1.ForbiddenException('something is wrong!');
         }
     }
-    async createPost() { }
+    async getPosts({ userid, limit }) {
+        try {
+            const posts = await this.postModel.find({ user: userid }).populate({
+                path: "comment",
+                model: "Comment",
+                options: {
+                    limit: limit || 8
+                }
+            }).limit(limit || 8);
+            if (posts.length < 1)
+                return {
+                    message: "no post yet",
+                    status: 200,
+                    isSuccess: false
+                };
+            return {
+                message: "posts succefully fetched",
+                status: 200,
+                isSuccess: true,
+                data: posts
+            };
+        }
+        catch (error) {
+            throw new common_1.ForbiddenException('something is wrong!');
+        }
+    }
+    async checkSubscriptionStatus({ userid, userNameId, limit }) {
+        const isSubscribed = await this.subscriptionModel.findOne({ subscriber: userid, user: userNameId });
+        if (!isSubscribed)
+            return {
+                message: `you are not in the subscription list`,
+                status: 400,
+                isSuccess: false
+            };
+        return await this.getPosts({ userid, limit });
+    }
+    async getPublicPost({ userid, username, limit }) {
+        let response;
+        try {
+            const user = await this.userModel.findById(userid);
+            if (!user)
+                return response = {
+                    message: "user not found",
+                    status: 400,
+                    isSuccess: false
+                };
+            const userName = await this.userModel.findOne({ userName: username });
+            if (!userName)
+                return response = {
+                    message: "username not found",
+                    status: 400,
+                    isSuccess: false
+                };
+            if (userName.subscription.mode) {
+                return await this.checkSubscriptionStatus({ userid, userNameId: userName._id, limit: limit });
+            }
+            else {
+                return await this.getPosts({ userid, limit });
+            }
+        }
+        catch (error) {
+            throw new common_1.ForbiddenException('something is wrong!');
+        }
+    }
+    async uploadPost() {
+    }
 };
 PostService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)('User')),
     __param(1, (0, mongoose_1.InjectModel)('Post')),
     __param(2, (0, mongoose_1.InjectModel)('Comment')),
-    __param(3, (0, common_1.Inject)(common_1.CACHE_MANAGER)),
+    __param(3, (0, mongoose_1.InjectModel)('Subscription')),
+    __param(4, (0, common_1.Inject)(common_1.CACHE_MANAGER)),
     __metadata("design:paramtypes", [mongoose_2.Model,
+        mongoose_2.Model,
         mongoose_2.Model,
         mongoose_2.Model, Object])
 ], PostService);

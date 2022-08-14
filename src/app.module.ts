@@ -2,12 +2,12 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { SignupModule } from './signup/signup.module';
+import { SignupModule } from './modules/signup/signup.module';
 import { ConfigModule } from '@nestjs/config';
-import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
-import { PasswordresetModule } from './passwordreset/passwordreset.module';
-import { PostModule } from './post/post.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { UserModule } from './modules/user/user.module';
+import { PasswordresetModule } from './modules/passwordreset/passwordreset.module';
+import { PostModule } from './modules/post/post.module';
 
 
 @Module({
