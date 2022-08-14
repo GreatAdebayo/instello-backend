@@ -7,6 +7,7 @@ import { Cache } from 'cache-manager'
 import { SubscriptionDto } from './dto/subscription.dto';
 import { Types } from "mongoose"
 import { MiddleWareService } from '../middlewares/middleware.service';
+import { CommentDto } from '../comment/dto/comment.dto';
 
 
 
@@ -15,7 +16,7 @@ import { MiddleWareService } from '../middlewares/middleware.service';
 export class PostService {
     constructor(@InjectModel('User') private readonly userModel: Model<UserDto>,
         @InjectModel('Post') private readonly postModel: Model<PostDto>,
-        @InjectModel('Comment') private readonly commentModel: Model<PostDto>,//change to comment dto 
+        @InjectModel('Comment') private readonly commentModel: Model<CommentDto>,
         @InjectModel('Subscription') private readonly subscriptionModel: Model<SubscriptionDto>,
         @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
         private readonly middlewareService: MiddleWareService) { }
@@ -47,7 +48,7 @@ export class PostService {
 
             //fetch posts and populate comments
             const posts = await this.postModel.find({ user: userid }).populate({
-                path: "comment",
+                path: "comments",
                 model: "Comment",
                 options: {
                     limit: limit || 8
@@ -89,7 +90,7 @@ export class PostService {
         try {
             //fetch posts and populate comments
             const posts = await this.postModel.find({ user: userid }).populate({
-                path: "comment",
+                path: "comments",
                 model: "Comment",
                 options: {
                     limit: limit || 8
@@ -199,7 +200,7 @@ export class PostService {
                 isSuccess: false
             }
 
-            const response = await this.middlewareService.fileValidationAndUploader(file, "instelloPost")
+            const response = await this.middlewareService.fileValidationAndUploader(file, process.env.POST)
 
             if (response.type == 'format')
                 return {

@@ -2,19 +2,16 @@ import { IsNotEmpty, IsString, MaxLength, MinLength } from "class-validator"
 import { Types } from "mongoose"
 
 
-export class PostDto {
-    user: Types.ObjectId
+export class CommentDto {
+    post: Types.ObjectId
+
+
+    username: string
 
     @IsNotEmpty()
     @IsString()
     @MaxLength(1000)
-    @MinLength(10)
-    caption: string
-
-    type: string
-
-    comments: []
-    likes: []
+    content: string
 
 }
 
