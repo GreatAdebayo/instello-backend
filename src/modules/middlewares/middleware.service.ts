@@ -4,12 +4,16 @@ import { CloudinaryService } from "../cloudinary/cloudinary.service";
 import { Model } from 'mongoose';
 import { UserDto } from 'src/modules/signup/dto/user.dto';
 import { Types } from 'mongoose'
+import { SubscriptionDto } from "../post/dto/subscription.dto";
+
+
 
 
 @Injectable()
 export class MiddleWareService {
     constructor(private readonly cloudinary: CloudinaryService,
-        @InjectModel('User') private readonly userModel: Model<UserDto>) { }
+        @InjectModel('User') private readonly userModel: Model<UserDto>,
+        @InjectModel('Subscription') private readonly subscriptionModel: Model<SubscriptionDto>) { }
 
 
 
@@ -60,6 +64,29 @@ export class MiddleWareService {
             if (!user) return;
 
             return user;
+
+        } catch (error) {
+            throw new HttpException({
+                status: HttpStatus.BAD_REQUEST,
+                error: error.message,
+            }, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+
+
+
+    async checkSubscription({ userid, userNameId }) {
+        try {
+            //check subscription status of logged in user 
+            const isSubscribed = await this.subscriptionModel.findOne({ subscriber: userid, user: userNameId })
+            if (!isSubscribed) return false
+
+
+            //check if subscription still active
+
+            return true
 
         } catch (error) {
             throw new HttpException({

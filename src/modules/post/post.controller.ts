@@ -1,5 +1,5 @@
 import { ResponseDto } from './../response.dto';
-import { Controller, Get, Post, UseGuards, Request, Res, Param, Query, Body, UseInterceptors, UploadedFile, Delete } from '@nestjs/common';
+import { Controller, Get, Post, UseGuards, Request, Res, Param, Query, Body, UseInterceptors, UploadedFile, Delete, Req } from '@nestjs/common';
 import { PostService } from './post.service';
 import { AuthGuard } from '@nestjs/passport';
 import { PostDto } from './dto/post.dto';
@@ -26,13 +26,13 @@ export class PostController {
 
 
 
-
     @UseGuards(AuthGuard('jwt'))
     @Get('public/:username')
     async getPublicPost(@Request() req, @Param("username") username: string, @Res() res) {
         const response: ResponseDto = await this.postService.getPublicPost({ userid: req.user.id, username, limit: 8 })
         return res.status(response.status).json(response)
     }
+
 
 
 
@@ -57,6 +57,14 @@ export class PostController {
     }
 
 
+
+
+    @UseGuards(AuthGuard('jwt'))
+    @Post('like/:id')
+    async likePost(@Param("id") postid: Types.ObjectId, @Req() req, @Res() res) {
+        const response: ResponseDto = await this.postService.likePost(postid, req.user.id)
+        return res.status(response.status).json(response)
+    }
 
 
 

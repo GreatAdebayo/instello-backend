@@ -18,6 +18,8 @@ export class CommentService {
 
     async postComment({ content }: CommentDto, postid: Types.ObjectId, userid: Types.ObjectId) {
         try {
+            //check if user exists
+
             const user = await this.middlewareService.checkUserExists(userid);
             if (!user) return {
                 message: "user not found",
@@ -26,8 +28,8 @@ export class CommentService {
             }
 
 
-            //check if post exists and user owns it
-            const post = await this.postModel.findOne({ _id: postid, user: userid }) as any
+            //check if post exists
+            const post = await this.postModel.findOne({ _id: postid }) as any
             if (!post) return {
                 message: "post not found",
                 status: 400,

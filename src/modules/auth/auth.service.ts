@@ -18,14 +18,21 @@ export class AuthService {
         private mailerService: MailerService) { }
 
 
-    async validateUser(email: string, password: string) {
-        const user = await this.userModel.findOne({ email });
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (user && isMatch) {
-            return user;
-        }
 
-        return null;
+    async validateUser(email: string, password: string) {
+        try {
+            const user = await this.userModel.findOne({ email });
+
+            if (user) {
+                const isMatch = await bcrypt.compare(password, user.password);
+                if (isMatch) return user;
+            }
+        } catch (error) {
+            throw new HttpException({
+                status: HttpStatus.BAD_REQUEST,
+                error: error.message,
+            }, HttpStatus.BAD_REQUEST);
+        }
     }
 
 

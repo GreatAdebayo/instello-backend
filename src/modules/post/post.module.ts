@@ -9,6 +9,7 @@ import { CommentSchema } from 'src/schema/comment.schema';
 import * as redisStore from "cache-manager-redis-store"
 import { SubscriptionSchema } from 'src/schema/subscription.schema';
 import { MiddleWareModule } from '../middlewares/middleware.module';
+import { LikeSchema } from 'src/schema/like.schema';
 
 
 
@@ -18,6 +19,7 @@ import { MiddleWareModule } from '../middlewares/middleware.module';
     { name: 'User', schema: UserSchema },
     { name: 'Post', schema: PostSchema },
     { name: 'Comment', schema: CommentSchema },
+    { name: 'Like', schema: LikeSchema },
     { name: 'Subscription', schema: SubscriptionSchema }
   ]), CacheModule.register({
     ttl: 30, store: redisStore, socket: {

@@ -20,6 +20,7 @@ export class CommentController {
     }
 
 
+
     @UseGuards(AuthGuard('jwt'))
     @Delete('/:comid/:postid')
     async deletePost(@Param() { comid, postid }, @Request() req, @Res() res) {
