@@ -37,4 +37,5 @@ export class UserDto {
     following: FollowDto[]
     noOfposts: number
     subscription: SubscriptionMode
+    profilePicture: string
 }
