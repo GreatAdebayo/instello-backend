@@ -9,6 +9,9 @@ import { Types } from 'mongoose'
 import { MiddleWareService } from '../middlewares/middleware.service';
 
 
+
+
+
 @Injectable()
 export class UserService {
     constructor(@InjectModel('User') private readonly userModel: Model<UserDto>,
@@ -17,6 +20,7 @@ export class UserService {
         @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
         private readonly middlewareService: MiddleWareService
     ) { }
+
 
 
 
@@ -34,6 +38,7 @@ export class UserService {
             }, HttpStatus.BAD_REQUEST);
         }
     }
+
 
 
 
@@ -92,6 +97,7 @@ export class UserService {
 
 
 
+
     async publicUserInfo(username: string) {
         try {
             //check user and fetch cached user info
@@ -144,6 +150,10 @@ export class UserService {
 
 
 
+
+
+
+
     async searchUser({ page, limit, username }: { page: number, limit: number, username: string }) {
         try {
             //filter out usernames that matches search query
@@ -174,6 +184,9 @@ export class UserService {
         }
 
     }
+
+
+
 
 
 
@@ -238,6 +251,8 @@ export class UserService {
             }, HttpStatus.BAD_REQUEST);
         }
     }
+
+
 
 
 
