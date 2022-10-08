@@ -17,6 +17,7 @@ const follow_schema_1 = require("../../schema/follow.schema");
 const post_schema_1 = require("../../schema/post.schema");
 const redisStore = require("cache-manager-redis-store");
 const throttler_1 = require("@nestjs/throttler");
+const middleware_module_1 = require("../middlewares/middleware.module");
 let UserModule = class UserModule {
 };
 UserModule = __decorate([
@@ -30,7 +31,7 @@ UserModule = __decorate([
                     host: 'localhost',
                     port: 6379
                 }
-            }), throttler_1.ThrottlerModule.forRoot()],
+            }), throttler_1.ThrottlerModule.forRoot(), middleware_module_1.MiddleWareModule],
         providers: [user_service_1.UserService, jwt_strategy_1.JwtStrategy],
         controllers: [user_controller_1.UserController]
     })

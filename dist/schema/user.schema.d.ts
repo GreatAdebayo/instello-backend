@@ -15,6 +15,9 @@ export declare const UserSchema: mongoose.Schema<any, mongoose.Model<any, any, a
         required?: unknown;
     }[];
     profilePicture?: string;
+    occupation?: string;
+    website?: string;
+    gender?: string;
     subscription?: {
         mode: boolean;
         duration?: string;

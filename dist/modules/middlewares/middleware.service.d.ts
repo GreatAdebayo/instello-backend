@@ -1,4 +1,3 @@
-/// <reference types="multer" />
 /// <reference types="mongoose/types/aggregate" />
 /// <reference types="mongoose/types/callback" />
 /// <reference types="mongoose/types/collection" />
@@ -27,20 +26,17 @@ import { CloudinaryService } from "../cloudinary/cloudinary.service";
 import { Model } from 'mongoose';
 import { UserDto } from 'src/modules/signup/dto/user.dto';
 import { Types } from 'mongoose';
+import { SubscriptionDto } from "../post/dto/subscription.dto";
 export declare class MiddleWareService {
     private readonly cloudinary;
     private readonly userModel;
-    constructor(cloudinary: CloudinaryService, userModel: Model<UserDto>);
-    fileValidationAndUploader(file: Express.Multer.File, folder: string): Promise<{
-        message: string;
-        type: string;
-        data?: undefined;
-    } | {
-        type: string;
-        data: import("cloudinary").UploadApiResponse | import("cloudinary").UploadApiErrorResponse;
-        message?: undefined;
-    }>;
+    private readonly subscriptionModel;
+    constructor(cloudinary: CloudinaryService, userModel: Model<UserDto>, subscriptionModel: Model<SubscriptionDto>);
     checkUserExists(userid: Types.ObjectId): Promise<import("mongoose").Document<unknown, any, UserDto> & UserDto & {
         _id: Types.ObjectId;
     }>;
+    checkSubscription({ userid, userNameId }: {
+        userid: any;
+        userNameId: any;
+    }): Promise<boolean>;
 }

@@ -12,12 +12,14 @@ const middleware_service_1 = require("./middleware.service");
 const cloudinary_module_1 = require("../cloudinary/cloudinary.module");
 const mongoose_1 = require("@nestjs/mongoose");
 const user_schema_1 = require("../../schema/user.schema");
+const subscription_schema_1 = require("../../schema/subscription.schema");
 let MiddleWareModule = class MiddleWareModule {
 };
 MiddleWareModule = __decorate([
     (0, common_1.Module)({
         imports: [cloudinary_module_1.CloudinaryModule, mongoose_1.MongooseModule.forFeature([
                 { name: 'User', schema: user_schema_1.UserSchema },
+                { name: 'Subscription', schema: subscription_schema_1.SubscriptionSchema },
             ])],
         providers: [middleware_service_1.MiddleWareService],
         controllers: [],

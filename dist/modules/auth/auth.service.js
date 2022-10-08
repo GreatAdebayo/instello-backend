@@ -29,12 +29,20 @@ let AuthService = class AuthService {
         this.mailerService = mailerService;
     }
     async validateUser(email, password) {
-        const user = await this.userModel.findOne({ email });
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (user && isMatch) {
-            return user;
+        try {
+            const user = await this.userModel.findOne({ email });
+            if (user) {
+                const isMatch = await bcrypt.compare(password, user.password);
+                if (isMatch)
+                    return user;
+            }
         }
-        return null;
+        catch (error) {
+            throw new common_1.HttpException({
+                status: common_1.HttpStatus.BAD_REQUEST,
+                error: error.message,
+            }, common_1.HttpStatus.BAD_REQUEST);
+        }
     }
     async signIn(user, ip) {
         try {

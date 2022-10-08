@@ -1,23 +1,56 @@
 import { Injectable } from '@nestjs/common';
-import { UploadApiErrorResponse, UploadApiResponse, v2 } from 'cloudinary';
-import toStream = require('buffer-to-stream');
+import { v2 } from 'cloudinary';
+
+
 
 
 @Injectable()
 
 export class CloudinaryService {
-    async uploadImage(
-        file: Express.Multer.File, folder: string
-    ): Promise<UploadApiResponse | UploadApiErrorResponse> {
+    async uploadAsset(
+        assets: any, folder: string
+    ) {
+        const uploads = [];
+        try {
+            let uploadStr = "";
+            for (const asset of assets) {
+                if (asset.mediaType === "image")
+                    uploadStr = 'data:image/jpg;base64,' + asset.base64
 
-        return new Promise((resolve, reject) => {
-            const upload = v2.uploader.upload_stream({ folder }, (error, result) => {
-                if (error) return reject(error);
-                resolve(result);
-                return result
-            });
+                if (asset.mediaType === "video")
+                    uploadStr = 'data:video/mov;base64,' + asset.base64
 
-            toStream(file.buffer).pipe(upload);
-        });
+                const result = await v2.uploader.upload(uploadStr,
+                    {
+                        resource_type: asset.mediaType,
+                        chunk_size: 6000000,
+                        folder,
+                        quality: "auto",
+                        fetch_format: "auto"
+
+                    })
+
+
+                const media = {
+                    url: result.secure_url,
+                    cloudinary_id: result.asset_id,
+                    format: asset.mediaType
+                }
+                uploads.push(media)
+            }
+
+            return {
+                type: 'success',
+                data: uploads
+            }
+
+        } catch (error) {
+            return {
+                type: 'error',
+                data: error.message
+            }
+        }
+
+
     }
 }

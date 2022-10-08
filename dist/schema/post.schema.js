@@ -12,31 +12,27 @@ exports.PostSchema = new Schema({
     caption: {
         type: String
     },
-    media: {
-        url: {
-            type: String,
-            required: true,
-        },
-        cloudinary_id: {
-            type: String,
-            required: true,
-        },
-        format: {
-            type: String,
-            required: true,
+    medias: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Media"
         }
-    },
-    comment: [
+    ],
+    comments: [
         {
             type: Schema.Types.ObjectId,
             ref: "Comment",
         },
     ],
-    like: [
+    likes: [
         {
             type: Schema.Types.ObjectId,
             ref: "Like",
         },
-    ]
+    ],
+    type: {
+        type: String,
+        required: true,
+    }
 }, { timestamps: true });
 //# sourceMappingURL=post.schema.js.map

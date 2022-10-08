@@ -16,5 +16,10 @@ export declare class UserDto {
     following: FollowDto[];
     noOfposts: number;
     subscription: SubscriptionMode;
+    profilePicture: string;
+    website: string;
+    occupation: string;
+    bio: string;
+    gender: string;
 }
 export {};

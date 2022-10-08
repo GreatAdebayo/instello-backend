@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MediaSchema = void 0;
+exports.PostMediaSchema = void 0;
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-exports.MediaSchema = new Schema({
+exports.PostMediaSchema = new Schema({
     post: {
         type: Schema.Types.ObjectId,
         ref: "Post",
@@ -14,10 +14,6 @@ exports.MediaSchema = new Schema({
         required: true,
     },
     cloudinary_id: {
-        type: String,
-        required: true,
-    },
-    type: {
         type: String,
         required: true,
     },

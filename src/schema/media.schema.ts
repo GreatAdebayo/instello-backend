@@ -2,7 +2,7 @@ import *  as mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-export const MediaSchema = new Schema(
+export const PostMediaSchema = new Schema(
     {
         post: {
             type: Schema.Types.ObjectId,
@@ -14,10 +14,6 @@ export const MediaSchema = new Schema(
             required: true,
         },
         cloudinary_id: {
-            type: String,
-            required: true,
-        },
-        type: {
             type: String,
             required: true,
         },

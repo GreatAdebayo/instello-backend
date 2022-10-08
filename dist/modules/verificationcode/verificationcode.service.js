@@ -46,7 +46,6 @@ let VerficationService = class VerficationService {
     }
     async sendVerificationCode({ email, id }) {
         const code = await this.generateCode({ email, id });
-        await this.mailerService.sendVerificationCode({ email, code });
         return;
     }
 };

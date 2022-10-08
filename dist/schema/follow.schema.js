@@ -6,12 +6,14 @@ const Schema = mongoose.Schema;
 exports.FollowSchema = new Schema({
     following: {
         id: {
-            type: Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
+            type: Schema.Types.ObjectId
         },
         profilePicture: {
             type: String
+        },
+        userName: {
+            type: String,
+            required: true,
         }
     },
     follower: {
@@ -21,7 +23,10 @@ exports.FollowSchema = new Schema({
         profilePicture: {
             type: String
         },
-        userName: { type: String }
+        userName: {
+            type: String,
+            required: true,
+        }
     },
 }, { timestamps: true });
 //# sourceMappingURL=follow.schema.js.map

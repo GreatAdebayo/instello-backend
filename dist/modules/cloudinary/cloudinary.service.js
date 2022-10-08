@@ -9,18 +9,41 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CloudinaryService = void 0;
 const common_1 = require("@nestjs/common");
 const cloudinary_1 = require("cloudinary");
-const toStream = require("buffer-to-stream");
 let CloudinaryService = class CloudinaryService {
-    async uploadImage(file, folder) {
-        return new Promise((resolve, reject) => {
-            const upload = cloudinary_1.v2.uploader.upload_stream({ folder }, (error, result) => {
-                if (error)
-                    return reject(error);
-                resolve(result);
-                return result;
-            });
-            toStream(file.buffer).pipe(upload);
-        });
+    async uploadAsset(assets, folder) {
+        const uploads = [];
+        try {
+            let uploadStr = "";
+            for (const asset of assets) {
+                if (asset.mediaType === "image")
+                    uploadStr = 'data:image/jpg;base64,' + asset.base64;
+                if (asset.mediaType === "video")
+                    uploadStr = 'data:video/mov;base64,' + asset.base64;
+                const result = await cloudinary_1.v2.uploader.upload(uploadStr, {
+                    resource_type: asset.mediaType,
+                    chunk_size: 6000000,
+                    folder,
+                    quality: "auto",
+                    fetch_format: "auto"
+                });
+                const media = {
+                    url: result.secure_url,
+                    cloudinary_id: result.asset_id,
+                    format: asset.mediaType
+                };
+                uploads.push(media);
+            }
+            return {
+                type: 'success',
+                data: uploads
+            };
+        }
+        catch (error) {
+            return {
+                type: 'error',
+                data: error.message
+            };
+        }
     }
 };
 CloudinaryService = __decorate([

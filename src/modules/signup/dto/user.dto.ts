@@ -38,4 +38,8 @@ export class UserDto {
     noOfposts: number
     subscription: SubscriptionMode
     profilePicture: string
+    website: string
+    occupation: string
+    bio: string
+    gender: string
 }

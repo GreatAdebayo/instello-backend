@@ -13,9 +13,9 @@ exports.CommentSchema = new Schema({
         type: String,
         required: true,
     },
-    by: {
-        type: Schema.Types.ObjectId,
+    username: {
+        type: String,
         required: true,
-    },
+    }
 }, { timestamps: true });
 //# sourceMappingURL=comment.schema.js.map

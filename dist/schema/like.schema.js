@@ -4,13 +4,17 @@ exports.LikeSchema = void 0;
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 exports.LikeSchema = new Schema({
+    user: {
+        type: Schema.Types.ObjectId,
+        required: true,
+    },
     post: {
         type: Schema.Types.ObjectId,
         ref: "Post",
         required: true,
     },
-    by: {
-        type: Schema.Types.ObjectId,
+    username: {
+        type: String,
         required: true,
     }
 }, { timestamps: true });

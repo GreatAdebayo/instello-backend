@@ -101,7 +101,6 @@ let SignupService = class SignupService {
                     $set: { email_verified: true },
                 });
                 const payload = { sub: user._id };
-                await this.mailerService.welcomeMessage({ email: user.email, lastName: user.lastName });
                 return {
                     message: "verified succesfully",
                     status: 200,

@@ -18,36 +18,10 @@ const mongoose_1 = require("@nestjs/mongoose");
 const cloudinary_service_1 = require("../cloudinary/cloudinary.service");
 const mongoose_2 = require("mongoose");
 let MiddleWareService = class MiddleWareService {
-    constructor(cloudinary, userModel) {
+    constructor(cloudinary, userModel, subscriptionModel) {
         this.cloudinary = cloudinary;
         this.userModel = userModel;
-    }
-    async fileValidationAndUploader(file, folder) {
-        const supportedFormat = ['image/jpeg', 'image/jpg', 'image/png', 'video/mp4'];
-        try {
-            const checkFormat = supportedFormat.find(format => format === file.mimetype);
-            if (!checkFormat)
-                return {
-                    message: `file format not supported, supported formart(${supportedFormat})`,
-                    type: "format"
-                };
-            if (file.size > 10000000)
-                return {
-                    message: `file size too large than 10mb`,
-                    type: "size"
-                };
-            const upload = await this.cloudinary.uploadImage(file, folder);
-            return {
-                type: "upload",
-                data: upload
-            };
-        }
-        catch (error) {
-            throw new common_1.HttpException({
-                status: common_1.HttpStatus.BAD_REQUEST,
-                error: error.message,
-            }, common_1.HttpStatus.BAD_REQUEST);
-        }
+        this.subscriptionModel = subscriptionModel;
     }
     async checkUserExists(userid) {
         try {
@@ -64,11 +38,27 @@ let MiddleWareService = class MiddleWareService {
             }, common_1.HttpStatus.BAD_REQUEST);
         }
     }
+    async checkSubscription({ userid, userNameId }) {
+        try {
+            const isSubscribed = await this.subscriptionModel.findOne({ subscriber: userid, user: userNameId });
+            if (!isSubscribed)
+                return false;
+            return true;
+        }
+        catch (error) {
+            throw new common_1.HttpException({
+                status: common_1.HttpStatus.BAD_REQUEST,
+                error: error.message,
+            }, common_1.HttpStatus.BAD_REQUEST);
+        }
+    }
 };
 MiddleWareService = __decorate([
     (0, common_1.Injectable)(),
     __param(1, (0, mongoose_1.InjectModel)('User')),
+    __param(2, (0, mongoose_1.InjectModel)('Subscription')),
     __metadata("design:paramtypes", [cloudinary_service_1.CloudinaryService,
+        mongoose_2.Model,
         mongoose_2.Model])
 ], MiddleWareService);
 exports.MiddleWareService = MiddleWareService;

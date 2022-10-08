@@ -45,7 +45,7 @@ export class VerficationService {
     async sendVerificationCode({ email, id }: { email: string, id: Types.ObjectId }) {
         const code = await this.generateCode({ email, id });
         //send code to email
-        await this.mailerService.sendVerificationCode({ email, code })
+        // await this.mailerService.sendVerificationCode({ email, code })
         return;
     }
 }

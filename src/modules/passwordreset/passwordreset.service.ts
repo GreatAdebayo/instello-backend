@@ -101,7 +101,7 @@ export class PasswordresetService {
                 );
 
                 //send email on password changed
-                await this.mailerService.passwordReset(email)
+                // await this.mailerService.passwordReset(email)
                 return {
                     message: "password succefully changed",
                     status: 200,

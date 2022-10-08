@@ -7,6 +7,7 @@ import { Cache } from 'cache-manager'
 import { PostDto } from 'src/modules/post/dto/post.dto';
 import { Types } from 'mongoose'
 import { MiddleWareService } from '../middlewares/middleware.service';
+import { EditProfile } from './dto/editprofile.dto';
 
 
 
@@ -27,7 +28,7 @@ export class UserService {
     private async fetchDetails(userid: Types.ObjectId, user: UserDto) {
         try {
             const [followers, following, posts] = await Promise.all([this.followModel.find({ "following.id": userid }).select("-following"),
-            this.followModel.find({ "follower.id": userid }).select("-follower"), this.postModel.find({ user: userid }), this.cacheManager.set("private_user_info", user)])
+            this.followModel.find({ "follower.id": userid }).select("-follower"), this.postModel.find({ user: userid })])
             return {
                 followers, following, posts
             }
@@ -45,22 +46,13 @@ export class UserService {
     async privateUserInfo(userid: Types.ObjectId) {
         try {
             //check user and fetch cached user info
-            const [user, cachedItem] = await Promise.all([this.userModel.findById(userid).select(`-password -createdAt -updatedAt 
-            -ip -device_verified`), this.cacheManager.get("private_user_info")])
+            const user = await this.userModel.findById(userid).select(`-password -createdAt -updatedAt 
+            -ip -device_verified`)
 
             if (!user) return {
                 message: "user not found",
                 status: 400,
                 isSuccess: false
-            }
-
-
-
-            if (cachedItem) return {
-                message: "user info succefully fetched",
-                status: 200,
-                isSuccess: true,
-                data: cachedItem
             }
 
 
@@ -101,21 +93,13 @@ export class UserService {
     async publicUserInfo(username: string) {
         try {
             //check user and fetch cached user info
-            const [user, cachedItem] = await Promise.all([this.userModel.findOne({ userName: username }).select(`-password -createdAt -updatedAt 
-             -ip -device_verified`), this.cacheManager.get("public_user_info")])
+            const user = await this.userModel.findOne({ userName: username }).select(`-password -createdAt -updatedAt 
+             -ip -device_verified`)
 
             if (!user) return {
                 message: "user not found",
                 status: 400,
                 isSuccess: false
-            }
-
-
-            if (cachedItem) return {
-                message: "user info succefully fetched",
-                status: 200,
-                isSuccess: true,
-                data: cachedItem
             }
 
 
@@ -132,6 +116,7 @@ export class UserService {
 
 
             //cache user posts
+
             await this.cacheManager.set("public_user_info", user)
 
             return {
@@ -278,23 +263,49 @@ export class UserService {
             }
 
 
-            //check if the user logged in and the username have relationship
-            const check = await this.followModel.findOne({ _id: id, "following.id": userName._id, "follower.id": userid })
-            if (!check)
-                return {
-                    message: "no relationship",
-                    status: 400,
-                    isSuccess: false
-                }
 
-
-            await this.followModel.deleteOne({ _id: id });
+            await this.followModel.deleteOne({ "following.userName": userName.userName, "follower.userName": user.userName });
 
             return {
                 message: `you have unfollowed ${username}`,
                 status: 200,
                 isSuccess: true
             }
+        } catch (error) {
+            throw new HttpException({
+                status: HttpStatus.BAD_REQUEST,
+                error: error.message,
+            }, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    async editProfile({ body, user }) {
+        const { website, bio, occupation, gender }: EditProfile = body;
+
+        try {
+            const checkUser = await this.userModel.findById(user.id)
+            if (!checkUser) return {
+                message: "user not found",
+                status: 400,
+                isSuccess: false
+            }
+
+
+
+            await this.userModel.updateOne(
+                { _id: user.id },
+                {
+                    $set: { website, bio, occupation, gender },
+                }
+            );
+
+            return {
+                message: "profile successfully updated",
+                status: 200,
+                isSuccess: true
+            }
+
         } catch (error) {
             throw new HttpException({
                 status: HttpStatus.BAD_REQUEST,

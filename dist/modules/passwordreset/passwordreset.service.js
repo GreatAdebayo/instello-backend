@@ -91,7 +91,6 @@ let PasswordresetService = class PasswordresetService {
                 await this.userModel.updateOne({ _id: userid }, {
                     $set: { password: hashedPassword },
                 });
-                await this.mailerService.passwordReset(email);
                 return {
                     message: "password succefully changed",
                     status: 200,

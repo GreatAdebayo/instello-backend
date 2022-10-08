@@ -132,7 +132,7 @@ export class SignupService {
                 const payload = { sub: user._id };
 
                 //send welcome message
-                await this.mailerService.welcomeMessage({ email: user.email, lastName: user.lastName })
+                // await this.mailerService.welcomeMessage({ email: user.email, lastName: user.lastName })
 
                 return {
                     message: "verified succesfully",

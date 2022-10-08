@@ -15,9 +15,12 @@ const mongoose_1 = require("@nestjs/mongoose");
 const user_schema_1 = require("../../schema/user.schema");
 const post_schema_1 = require("../../schema/post.schema");
 const comment_schema_1 = require("../../schema/comment.schema");
+const like_schema_1 = require("../../schema/like.schema");
 const redisStore = require("cache-manager-redis-store");
 const subscription_schema_1 = require("../../schema/subscription.schema");
 const middleware_module_1 = require("../middlewares/middleware.module");
+const cloudinary_module_1 = require("../cloudinary/cloudinary.module");
+const media_schema_1 = require("../../schema/media.schema");
 let PostModule = class PostModule {
 };
 PostModule = __decorate([
@@ -26,13 +29,15 @@ PostModule = __decorate([
                 { name: 'User', schema: user_schema_1.UserSchema },
                 { name: 'Post', schema: post_schema_1.PostSchema },
                 { name: 'Comment', schema: comment_schema_1.CommentSchema },
-                { name: 'Subscription', schema: subscription_schema_1.SubscriptionSchema }
+                { name: 'Like', schema: like_schema_1.LikeSchema },
+                { name: 'Subscription', schema: subscription_schema_1.SubscriptionSchema },
+                { name: 'PostMedia', schema: media_schema_1.PostMediaSchema },
             ]), common_1.CacheModule.register({
                 ttl: 30, store: redisStore, socket: {
                     host: 'localhost',
                     port: 6379
                 }
-            }), middleware_module_1.MiddleWareModule],
+            }), middleware_module_1.MiddleWareModule, cloudinary_module_1.CloudinaryModule],
         controllers: [post_controller_1.PostController],
         providers: [post_service_1.PostService, jwt_strategy_1.JwtStrategy]
     })

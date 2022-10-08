@@ -7,5 +7,6 @@ interface Follow {
 export declare class FollowDto {
     user: Follow;
     follower: Follow;
+    following: Follow;
 }
 export {};

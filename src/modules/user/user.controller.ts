@@ -1,9 +1,10 @@
-import { Controller, Get, Param, Post, Query, Request, Res, UseGuards, Delete } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query, Request, Res, UseGuards, Delete, Put, Body } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from './user.service';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { ResponseDto } from '../response.dto';
-import { Types } from 'mongoose'
+import { EditProfile } from './dto/editprofile.dto';
+
 
 
 @Controller('api/user')
@@ -20,7 +21,7 @@ export class UserController {
     }
 
 
-
+    @UseGuards(AuthGuard('jwt'))
     @Get('public/:username')
     async publiceUserInfo(@Param("username") username: string, @Res() res) {
         const response: ResponseDto = await this.userService.publicUserInfo(username)
@@ -28,7 +29,7 @@ export class UserController {
     }
 
 
-
+    @UseGuards(AuthGuard('jwt'))
     @UseGuards(ThrottlerGuard)
     @Throttle(1, 1)
     @Get('search')
@@ -54,11 +55,19 @@ export class UserController {
 
 
     @UseGuards(AuthGuard('jwt'))
-    @Delete('follow/:username/:id')
+    @Delete('follow/:username')
     async unfollowUser(@Param() { username, id }, @Request() req, @Res() res) {
         const response: ResponseDto = await this.userService.unfollowUser(username, id, req.user.id);
         return res.status(response.status).json(response)
     }
 
 
+
+
+    @UseGuards(AuthGuard('jwt'))
+    @Post('editprofile')
+    async editProfile(@Request() req, @Res() res) {
+        const response: ResponseDto = await this.userService.editProfile(req)
+        return res.status(response.status).json(response)
+    }
 }

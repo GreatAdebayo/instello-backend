@@ -17,16 +17,44 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const middleware_service_1 = require("../middlewares/middleware.service");
+const cloudinary_service_1 = require("../cloudinary/cloudinary.service");
 let PostService = class PostService {
-    constructor(userModel, postModel, commentModel, subscriptionModel, cacheManager, middlewareService) {
+    constructor(userModel, postModel, commentModel, postMediaModel, subscriptionModel, likeModel, cacheManager, middlewareService, cloudinaryService) {
         this.userModel = userModel;
         this.postModel = postModel;
         this.commentModel = commentModel;
+        this.postMediaModel = postMediaModel;
         this.subscriptionModel = subscriptionModel;
+        this.likeModel = likeModel;
         this.cacheManager = cacheManager;
         this.middlewareService = middlewareService;
+        this.cloudinaryService = cloudinaryService;
     }
-    async getPrivatePost({ userid, limit }) {
+    async getPosts(userid, { limit, type }) {
+        try {
+            const posts = await this.postModel.find({ user: userid, type }).populate([
+                {
+                    path: "comments",
+                    model: "Comment",
+                    options: {
+                        limit: limit || 8
+                    }
+                },
+                {
+                    path: "likes",
+                    model: "Like"
+                }
+            ]).limit(limit || 8);
+            return posts;
+        }
+        catch (error) {
+            throw new common_1.HttpException({
+                status: common_1.HttpStatus.BAD_REQUEST,
+                error: error.message,
+            }, common_1.HttpStatus.BAD_REQUEST);
+        }
+    }
+    async getPrivatePost(userid, { limit, type }) {
         try {
             const [user, cachedItem] = await Promise.all([this.middlewareService.checkUserExists(userid), this.cacheManager.get("private_user_post")]);
             if (!user)
@@ -42,13 +70,7 @@ let PostService = class PostService {
                     isSuccess: true,
                     data: cachedItem
                 };
-            const posts = await this.postModel.find({ user: userid }).populate({
-                path: "comment",
-                model: "Comment",
-                options: {
-                    limit: limit || 8
-                }
-            }).limit(limit || 8);
+            const posts = await this.getPosts(userid, { limit, type });
             if (posts.length < 1)
                 return {
                     message: "no post yet",
@@ -70,54 +92,7 @@ let PostService = class PostService {
             }, common_1.HttpStatus.BAD_REQUEST);
         }
     }
-    async getPosts({ userid, limit }) {
-        try {
-            const posts = await this.postModel.find({ user: userid }).populate({
-                path: "comment",
-                model: "Comment",
-                options: {
-                    limit: limit || 8
-                }
-            }).limit(limit || 8);
-            if (posts.length < 1)
-                return {
-                    message: "no post yet",
-                    status: 200,
-                    isSuccess: false
-                };
-            return {
-                message: "posts succefully fetched",
-                status: 200,
-                isSuccess: true,
-                data: posts
-            };
-        }
-        catch (error) {
-            throw new common_1.HttpException({
-                status: common_1.HttpStatus.BAD_REQUEST,
-                error: error.message,
-            }, common_1.HttpStatus.BAD_REQUEST);
-        }
-    }
-    async checkSubscriptionStatus({ userid, userNameId, limit }) {
-        try {
-            const isSubscribed = await this.subscriptionModel.findOne({ subscriber: userid, user: userNameId });
-            if (!isSubscribed)
-                return {
-                    message: `you are not in the subscription list`,
-                    status: 400,
-                    isSuccess: false
-                };
-            return await this.getPosts({ userid, limit });
-        }
-        catch (error) {
-            throw new common_1.HttpException({
-                status: common_1.HttpStatus.BAD_REQUEST,
-                error: error.message,
-            }, common_1.HttpStatus.BAD_REQUEST);
-        }
-    }
-    async getPublicPost({ userid, username, limit }) {
+    async getPublicPost(userid, username, { limit, type }) {
         try {
             const [user, userName] = await Promise.all([this.middlewareService.checkUserExists(userid), this.userModel.findOne({ userName: username })]);
             if (!user)
@@ -132,11 +107,35 @@ let PostService = class PostService {
                     status: 400,
                     isSuccess: false
                 };
-            if (userName.subscription.mode) {
-                return await this.checkSubscriptionStatus({ userid, userNameId: userName._id, limit: limit });
+            if (await this.middlewareService.checkSubscription({ userid, userNameId: userName._id })) {
+                const [posts, cachedItem] = await Promise.all([this.getPosts(userid, { limit, type }), this.cacheManager.get("public_user_post")]);
+                if (posts.length < 1)
+                    return {
+                        message: "no post yet",
+                        status: 200,
+                        isSuccess: false
+                    };
+                if (cachedItem)
+                    return {
+                        message: "posts succefully fetched",
+                        status: 200,
+                        isSuccess: true,
+                        data: cachedItem
+                    };
+                await this.cacheManager.set("public_user_post", posts);
+                return {
+                    message: "posts succefully fetched",
+                    status: 200,
+                    isSuccess: true,
+                    data: posts
+                };
             }
             else {
-                return await this.getPosts({ userid, limit });
+                return {
+                    message: "you are not in the subscription list",
+                    status: 400,
+                    isSuccess: false
+                };
             }
         }
         catch (error) {
@@ -146,7 +145,51 @@ let PostService = class PostService {
             }, common_1.HttpStatus.BAD_REQUEST);
         }
     }
-    async uploadPost(userid, { caption }, file) {
+    async getPublicTimeLine(userid, username, { limit, type }) {
+        try {
+            const [user, userName] = await Promise.all([this.middlewareService.checkUserExists(userid), this.userModel.findOne({ userName: username })]);
+            if (!user)
+                return {
+                    message: "user not found",
+                    status: 400,
+                    isSuccess: false
+                };
+            if (!userName)
+                return {
+                    message: "username not found",
+                    status: 400,
+                    isSuccess: false
+                };
+            const [posts, cachedItem] = await Promise.all([this.getPosts(userid, { limit, type }), this.cacheManager.get("public_timeline")]);
+            if (posts.length < 1)
+                return {
+                    message: "no post yet",
+                    status: 200,
+                    isSuccess: false
+                };
+            if (cachedItem)
+                return {
+                    message: "posts succefully fetched",
+                    status: 200,
+                    isSuccess: true,
+                    data: cachedItem
+                };
+            await this.cacheManager.set("public_timeline", posts);
+            return {
+                message: "posts succefully fetched",
+                status: 200,
+                isSuccess: true,
+                data: posts
+            };
+        }
+        catch (error) {
+            throw new common_1.HttpException({
+                status: common_1.HttpStatus.BAD_REQUEST,
+                error: error.message,
+            }, common_1.HttpStatus.BAD_REQUEST);
+        }
+    }
+    async newPost(userid, post) {
         try {
             const user = await this.middlewareService.checkUserExists(userid);
             if (!user)
@@ -155,35 +198,32 @@ let PostService = class PostService {
                     status: 400,
                     isSuccess: false
                 };
-            const response = await this.middlewareService.fileValidationAndUploader(file, "instelloPost");
-            if (response.type == 'format')
-                return {
-                    message: response.message,
-                    status: 400,
-                    isSuccess: false
-                };
-            if (response.type == 'size')
-                return {
-                    message: response.message,
-                    status: 400,
-                    isSuccess: false
-                };
-            if (response.type == 'upload') {
-                const { secure_url, public_id } = response.data;
-                const post = new this.postModel({
+            const response = await this.cloudinaryService.uploadAsset(post.assets, process.env.POST);
+            const { data, type } = response;
+            if (type === "success") {
+                let savePost = new this.postModel({
                     user: userid,
-                    caption,
-                    media: {
-                        url: secure_url,
-                        cloudinary_id: public_id,
-                        format: file.mimetype
-                    }
+                    caption: post.caption,
+                    type: post.type
                 });
-                await post.save();
+                const mediaIds = [];
+                for (const media of data) {
+                    let saveMedia = new this.postMediaModel(Object.assign(Object.assign({}, media), { post: savePost._id }));
+                    await saveMedia.save();
+                    savePost.medias = [...savePost.medias, saveMedia._id];
+                }
+                await savePost.save();
                 return {
                     message: 'post successfully uploaded',
                     status: 200,
                     isSuccess: true
+                };
+            }
+            if (type === 'error') {
+                return {
+                    message: data,
+                    status: 400,
+                    isSuccess: false
                 };
             }
         }
@@ -224,18 +264,67 @@ let PostService = class PostService {
             }, common_1.HttpStatus.BAD_REQUEST);
         }
     }
+    async likePost(postid, userid) {
+        try {
+            const user = await this.middlewareService.checkUserExists(userid);
+            if (!user)
+                return {
+                    message: "user not found",
+                    status: 400,
+                    isSuccess: false
+                };
+            let post = await this.postModel.findOne({ _id: postid });
+            if (!post)
+                return {
+                    message: "post not found",
+                    status: 400,
+                    isSuccess: false
+                };
+            const check = await this.likeModel.findOne({ user: userid, post: postid });
+            if (check)
+                return {
+                    message: "post already liked by you",
+                    status: 400,
+                    isSuccess: false
+                };
+            let like = new this.likeModel({
+                post: postid,
+                username: user.userName,
+                user: userid
+            });
+            like = await like.save();
+            post.likes.push(like._id);
+            await post.save();
+            return {
+                message: "post liked",
+                status: 200,
+                isSuccess: true
+            };
+        }
+        catch (error) {
+            throw new common_1.HttpException({
+                status: common_1.HttpStatus.BAD_REQUEST,
+                error: error.message,
+            }, common_1.HttpStatus.BAD_REQUEST);
+        }
+    }
 };
 PostService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)('User')),
     __param(1, (0, mongoose_1.InjectModel)('Post')),
     __param(2, (0, mongoose_1.InjectModel)('Comment')),
-    __param(3, (0, mongoose_1.InjectModel)('Subscription')),
-    __param(4, (0, common_1.Inject)(common_1.CACHE_MANAGER)),
+    __param(3, (0, mongoose_1.InjectModel)('PostMedia')),
+    __param(4, (0, mongoose_1.InjectModel)('Subscription')),
+    __param(5, (0, mongoose_1.InjectModel)('Like')),
+    __param(6, (0, common_1.Inject)(common_1.CACHE_MANAGER)),
     __metadata("design:paramtypes", [mongoose_2.Model,
         mongoose_2.Model,
         mongoose_2.Model,
-        mongoose_2.Model, Object, middleware_service_1.MiddleWareService])
+        mongoose_2.Model,
+        mongoose_2.Model,
+        mongoose_2.Model, Object, middleware_service_1.MiddleWareService,
+        cloudinary_service_1.CloudinaryService])
 ], PostService);
 exports.PostService = PostService;
 //# sourceMappingURL=post.service.js.map

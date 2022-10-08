@@ -17,12 +17,22 @@ const auth_module_1 = require("./modules/auth/auth.module");
 const user_module_1 = require("./modules/user/user.module");
 const passwordreset_module_1 = require("./modules/passwordreset/passwordreset.module");
 const post_module_1 = require("./modules/post/post.module");
+const comment_module_1 = require("./modules/comment/comment.module");
+const feed_module_1 = require("./modules/feed/feed.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [signup_module_1.SignupModule, mongoose_1.MongooseModule.forRoot('mongodb+srv://great:8AYkra15GXQJjimm@shop.wej5v.mongodb.net/instello?retryWrites=true&w=majority'),
-            config_1.ConfigModule.forRoot({ isGlobal: true }), auth_module_1.AuthModule, user_module_1.UserModule, passwordreset_module_1.PasswordresetModule, post_module_1.PostModule],
+        imports: [mongoose_1.MongooseModule.forRoot('mongodb+srv://great:8AYkra15GXQJjimm@shop.wej5v.mongodb.net/instello?retryWrites=true&w=majority'),
+            config_1.ConfigModule.forRoot({ isGlobal: true }),
+            signup_module_1.SignupModule,
+            auth_module_1.AuthModule,
+            user_module_1.UserModule,
+            passwordreset_module_1.PasswordresetModule,
+            post_module_1.PostModule,
+            comment_module_1.CommentModule,
+            feed_module_1.FeedModule
+        ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     })

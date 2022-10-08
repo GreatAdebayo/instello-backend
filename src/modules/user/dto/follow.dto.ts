@@ -9,5 +9,6 @@ interface Follow {
 export class FollowDto {
     user: Follow
     follower: Follow
+    following: Follow
 }
 

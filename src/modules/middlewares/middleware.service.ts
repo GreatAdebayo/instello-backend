@@ -9,6 +9,7 @@ import { SubscriptionDto } from "../post/dto/subscription.dto";
 
 
 
+
 @Injectable()
 export class MiddleWareService {
     constructor(private readonly cloudinary: CloudinaryService,
@@ -19,40 +20,40 @@ export class MiddleWareService {
 
 
 
-    async fileValidationAndUploader(file: Express.Multer.File, folder: string) {
-        const supportedFormat = ['image/jpeg', 'image/jpg', 'image/png', 'video/mp4']
-        try {
-            // check file format
-            const checkFormat = supportedFormat.find(format => format === file.mimetype)
-            if (!checkFormat)
-                return {
-                    message: `file format not supported, supported formart(${supportedFormat})`,
-                    type: "format"
-                }
+    // async fileValidationAndUploader(file: Express.Multer.File, folder: string) {
+    //     const supportedFormat = ['image/jpeg', 'image/jpg', 'image/png', 'video/mp4']
+    //     try {
+    //         // check file format
+    //         const checkFormat = supportedFormat.find(format => format === file.mimetype)
+    //         if (!checkFormat)
+    //             return {
+    //                 message: `file format not supported, supported formart(${supportedFormat})`,
+    //                 type: "format"
+    //             }
 
 
-            // check file size
-            if (file.size > 10000000) //10mb
-                return {
-                    message: `file size too large than 10mb`,
-                    type: "size"
-                }
+    //         // check file size
+    //         if (file.size > 10000000) //10mb
+    //             return {
+    //                 message: `file size too large than 10mb`,
+    //                 type: "size"
+    //             }
 
 
-            // upload file to cloudinary
-            const upload = await this.cloudinary.uploadImage(file, folder)
+    //         // upload file to cloudinary
+    //         const upload = await this.cloudinary.uploadImage(file, folder)
 
-            return {
-                type: "upload",
-                data: upload
-            }
-        } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.BAD_REQUEST,
-                error: error.message,
-            }, HttpStatus.BAD_REQUEST);
-        }
-    }
+    //         return {
+    //             type: "upload",
+    //             data: upload
+    //         }
+    //     } catch (error) {
+    //         throw new HttpException({
+    //             status: HttpStatus.BAD_REQUEST,
+    //             error: error.message,
+    //         }, HttpStatus.BAD_REQUEST);
+    //     }
+    // }
 
 
 
@@ -95,4 +96,7 @@ export class MiddleWareService {
             }, HttpStatus.BAD_REQUEST);
         }
     }
+
+
+
 }

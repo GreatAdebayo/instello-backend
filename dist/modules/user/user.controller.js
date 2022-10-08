@@ -33,6 +33,18 @@ let UserController = class UserController {
         const response = await this.userService.searchUser({ page, limit, username });
         return res.status(response.status).json(response);
     }
+    async followUser(username, req, res) {
+        const response = await this.userService.followUser(username, req.user.id);
+        return res.status(response.status).json(response);
+    }
+    async unfollowUser({ username, id }, req, res) {
+        const response = await this.userService.unfollowUser(username, id, req.user.id);
+        return res.status(response.status).json(response);
+    }
+    async editProfile(req, res) {
+        const response = await this.userService.editProfile(req);
+        return res.status(response.status).json(response);
+    }
 };
 __decorate([
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
@@ -44,6 +56,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "privateUserInfo", null);
 __decorate([
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, common_1.Get)('public/:username'),
     __param(0, (0, common_1.Param)("username")),
     __param(1, (0, common_1.Res)()),
@@ -52,6 +65,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "publiceUserInfo", null);
 __decorate([
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, common_1.UseGuards)(throttler_1.ThrottlerGuard),
     (0, throttler_1.Throttle)(1, 1),
     (0, common_1.Get)('search'),
@@ -63,8 +77,37 @@ __decorate([
     __metadata("design:paramtypes", [Object, Number, Number, String]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "searchUser", null);
+__decorate([
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, common_1.Post)('follow/:username'),
+    __param(0, (0, common_1.Param)('username')),
+    __param(1, (0, common_1.Request)()),
+    __param(2, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object, Object]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "followUser", null);
+__decorate([
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, common_1.Delete)('follow/:username'),
+    __param(0, (0, common_1.Param)()),
+    __param(1, (0, common_1.Request)()),
+    __param(2, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object, Object]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "unfollowUser", null);
+__decorate([
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, common_1.Post)('editprofile'),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "editProfile", null);
 UserController = __decorate([
-    (0, common_1.Controller)('api/userinfo'),
+    (0, common_1.Controller)('api/user'),
     __metadata("design:paramtypes", [user_service_1.UserService])
 ], UserController);
 exports.UserController = UserController;

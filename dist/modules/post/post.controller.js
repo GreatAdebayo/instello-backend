@@ -16,27 +16,33 @@ exports.PostController = void 0;
 const common_1 = require("@nestjs/common");
 const post_service_1 = require("./post.service");
 const passport_1 = require("@nestjs/passport");
-const post_dto_1 = require("./dto/post.dto");
-const platform_express_1 = require("@nestjs/platform-express");
 const mongoose_1 = require("mongoose");
 let PostController = class PostController {
     constructor(postService) {
         this.postService = postService;
     }
-    async getPrivatePost(req, res, limit = 8) {
-        const response = await this.postService.getPrivatePost({ userid: req.user.id, limit: 8 });
+    async getPrivatePost(req, res, limit, type) {
+        const response = await this.postService.getPrivatePost(req.user.id, { limit: 8, type });
         return res.status(response.status).json(response);
     }
-    async getPublicPost(req, username, res) {
-        const response = await this.postService.getPublicPost({ userid: req.user.id, username, limit: 8 });
+    async getPublicPost(req, username, res, limit) {
+        const response = await this.postService.getPublicPost(req.user.id, username, { limit: 8, type: "default" });
         return res.status(response.status).json(response);
     }
-    async uploadPost(body, file, req, res) {
-        const response = await this.postService.uploadPost(req.user.id, body, file);
+    async newPost(body, res, req) {
+        const response = await this.postService.newPost(req.user.id, body);
         return res.status(response.status).json(response);
     }
     async deletePost(postid, req, res) {
         const response = await this.postService.deletePost(postid, req.user.id);
+        return res.status(response.status).json(response);
+    }
+    async likePost(postid, req, res) {
+        const response = await this.postService.likePost(postid, req.user.id);
+        return res.status(response.status).json(response);
+    }
+    async getPublicTimeLine(req, username, res, limit) {
+        const response = await this.postService.getPublicTimeLine(req.user.id, username, { limit: 8, type: "timeline" });
         return res.status(response.status).json(response);
     }
 };
@@ -46,8 +52,9 @@ __decorate([
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Res)()),
     __param(2, (0, common_1.Query)('limit')),
+    __param(3, (0, common_1.Query)('type')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object, Number]),
+    __metadata("design:paramtypes", [Object, Object, Number, String]),
     __metadata("design:returntype", Promise)
 ], PostController.prototype, "getPrivatePost", null);
 __decorate([
@@ -56,25 +63,24 @@ __decorate([
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Param)("username")),
     __param(2, (0, common_1.Res)()),
+    __param(3, (0, common_1.Query)("limit")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String, Object]),
+    __metadata("design:paramtypes", [Object, String, Object, Number]),
     __metadata("design:returntype", Promise)
 ], PostController.prototype, "getPublicPost", null);
 __decorate([
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
-    (0, common_1.Post)('upload'),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
+    (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.UploadedFile)()),
-    __param(2, (0, common_1.Request)()),
-    __param(3, (0, common_1.Res)()),
+    __param(1, (0, common_1.Res)()),
+    __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [post_dto_1.PostDto, Object, Object, Object]),
+    __metadata("design:paramtypes", [Object, Object, Object]),
     __metadata("design:returntype", Promise)
-], PostController.prototype, "uploadPost", null);
+], PostController.prototype, "newPost", null);
 __decorate([
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
-    (0, common_1.Delete)('delete/:id'),
+    (0, common_1.Delete)('/:id'),
     __param(0, (0, common_1.Param)("id")),
     __param(1, (0, common_1.Request)()),
     __param(2, (0, common_1.Res)()),
@@ -82,6 +88,27 @@ __decorate([
     __metadata("design:paramtypes", [mongoose_1.Types.ObjectId, Object, Object]),
     __metadata("design:returntype", Promise)
 ], PostController.prototype, "deletePost", null);
+__decorate([
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, common_1.Post)('like/:id'),
+    __param(0, (0, common_1.Param)("id")),
+    __param(1, (0, common_1.Req)()),
+    __param(2, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [mongoose_1.Types.ObjectId, Object, Object]),
+    __metadata("design:returntype", Promise)
+], PostController.prototype, "likePost", null);
+__decorate([
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, common_1.Get)('public/timeline/:username'),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Param)("username")),
+    __param(2, (0, common_1.Res)()),
+    __param(3, (0, common_1.Query)("limit")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, Object, Number]),
+    __metadata("design:returntype", Promise)
+], PostController.prototype, "getPublicTimeLine", null);
 PostController = __decorate([
     (0, common_1.Controller)('api/post'),
     __metadata("design:paramtypes", [post_service_1.PostService])

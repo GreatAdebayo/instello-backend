@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PostQuery = exports.PostDto = void 0;
+exports.GetPostDto = exports.PostDto = void 0;
 const class_validator_1 = require("class-validator");
 class PostDto {
 }
@@ -20,12 +20,13 @@ __decorate([
     (0, class_validator_1.MinLength)(10),
     __metadata("design:type", String)
 ], PostDto.prototype, "caption", void 0);
-exports.PostDto = PostDto;
-class PostQuery {
-}
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], PostQuery.prototype, "type", void 0);
-exports.PostQuery = PostQuery;
+], PostDto.prototype, "type", void 0);
+exports.PostDto = PostDto;
+class GetPostDto {
+}
+exports.GetPostDto = GetPostDto;
 //# sourceMappingURL=post.dto.js.map

@@ -31,6 +31,16 @@ export const UserSchema = new Schema({
         type: String,
         default: "Hi there!"
     },
+
+    occupation: {
+        type: String
+    },
+    website: {
+        type: String
+    },
+    gender: {
+        type: String
+    },
     email_verified: {
         type: Boolean,
         default: false,
