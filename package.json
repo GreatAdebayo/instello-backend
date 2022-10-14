@@ -1,6 +1,9 @@
 {
   "name": "instello",
   "version": "0.0.1",
+  "engines": {
+    "node": "6.11.1"
+  },
   "description": "",
   "author": "justgreat.eth",
   "private": true,
