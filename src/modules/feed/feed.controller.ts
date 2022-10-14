@@ -13,7 +13,7 @@ export class FeedController {
     @Get()
     async privateFeeds(@Res() res) {
         const response: ResponseDto = await this.feedService.feeds()
-        return res.status(response.status).json(response)
+        // return res.status(response.status).json(response)
     }
 
 }
