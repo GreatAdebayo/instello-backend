@@ -21,12 +21,8 @@ let PostController = class PostController {
     constructor(postService) {
         this.postService = postService;
     }
-    async getPrivatePost(req, res, limit, type) {
-        const response = await this.postService.getPrivatePost(req.user.id, { limit: 8, type });
-        return res.status(response.status).json(response);
-    }
-    async getPublicPost(req, username, res, limit) {
-        const response = await this.postService.getPublicPost(req.user.id, username, { limit: 8, type: "default" });
+    async getPrivatePost(req, res, limit, mode) {
+        const response = await this.postService.getPrivatePost(req.user.id, mode);
         return res.status(response.status).json(response);
     }
     async newPost(body, res, req) {
@@ -41,10 +37,6 @@ let PostController = class PostController {
         const response = await this.postService.likePost(postid, req.user.id);
         return res.status(response.status).json(response);
     }
-    async getPublicTimeLine(req, username, res, limit) {
-        const response = await this.postService.getPublicTimeLine(req.user.id, username, { limit: 8, type: "timeline" });
-        return res.status(response.status).json(response);
-    }
 };
 __decorate([
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
@@ -52,22 +44,11 @@ __decorate([
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Res)()),
     __param(2, (0, common_1.Query)('limit')),
-    __param(3, (0, common_1.Query)('type')),
+    __param(3, (0, common_1.Query)('mode')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object, Number, String]),
     __metadata("design:returntype", Promise)
 ], PostController.prototype, "getPrivatePost", null);
-__decorate([
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
-    (0, common_1.Get)('public/:username'),
-    __param(0, (0, common_1.Request)()),
-    __param(1, (0, common_1.Param)("username")),
-    __param(2, (0, common_1.Res)()),
-    __param(3, (0, common_1.Query)("limit")),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String, Object, Number]),
-    __metadata("design:returntype", Promise)
-], PostController.prototype, "getPublicPost", null);
 __decorate([
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, common_1.Post)(),
@@ -98,17 +79,6 @@ __decorate([
     __metadata("design:paramtypes", [mongoose_1.Types.ObjectId, Object, Object]),
     __metadata("design:returntype", Promise)
 ], PostController.prototype, "likePost", null);
-__decorate([
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
-    (0, common_1.Get)('public/timeline/:username'),
-    __param(0, (0, common_1.Request)()),
-    __param(1, (0, common_1.Param)("username")),
-    __param(2, (0, common_1.Res)()),
-    __param(3, (0, common_1.Query)("limit")),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String, Object, Number]),
-    __metadata("design:returntype", Promise)
-], PostController.prototype, "getPublicTimeLine", null);
 PostController = __decorate([
     (0, common_1.Controller)('api/post'),
     __metadata("design:paramtypes", [post_service_1.PostService])

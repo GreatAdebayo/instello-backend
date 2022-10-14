@@ -30,7 +30,7 @@ exports.PostSchema = new Schema({
             ref: "Like",
         },
     ],
-    type: {
+    mode: {
         type: String,
         required: true,
     }

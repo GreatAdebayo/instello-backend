@@ -15,10 +15,11 @@ export const CommentSchema = new Schema(
             required: true,
         },
 
-        username: {
-            type: String,
+        user: {
+            type: Schema.Types.ObjectId,
+            ref: "User",
             required: true,
-        }
+        },
     },
     { timestamps: true }
 );

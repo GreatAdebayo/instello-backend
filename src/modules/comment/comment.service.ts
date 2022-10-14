@@ -19,7 +19,6 @@ export class CommentService {
     async postComment({ content }: CommentDto, postid: Types.ObjectId, userid: Types.ObjectId) {
         try {
             //check if user exists
-
             const user = await this.middlewareService.checkUserExists(userid);
             if (!user) return {
                 message: "user not found",
@@ -38,7 +37,7 @@ export class CommentService {
 
 
             let postComment = new this.commentModel({
-                username: user.userName,
+                user: userid,
                 content,
                 post: postid
             })
@@ -115,4 +114,45 @@ export class CommentService {
         }
     }
 
+
+
+    async getComments(postid: Types.ObjectId) {
+        try {
+            //check if post exists
+            const post = await this.postModel.findOne({ _id: postid }) as any
+            if (!post) return {
+                message: "post not found",
+                status: 400,
+                isSuccess: false
+            }
+
+            const comments = await this.commentModel.find({ post: postid }).populate(
+                {
+                    path: "user",
+                    model: "User",
+                    select: { 'userName': 1, 'email_verified': 1, 'profilePicture': 1 }
+
+                }
+            ).sort({
+                createdAt: 'descending'
+            })
+            if (!comments.length) return {
+                message: "no comments",
+                status: 400,
+                isSuccess: false
+            }
+
+            return {
+                message: "comments fetched",
+                status: 200,
+                isSuccess: true,
+                data: comments
+            }
+        } catch (error) {
+            throw new HttpException({
+                status: HttpStatus.BAD_REQUEST,
+                error: error.message,
+            }, HttpStatus.BAD_REQUEST);
+        }
+    }
 }

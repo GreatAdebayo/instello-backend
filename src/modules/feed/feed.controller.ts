@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, UseGuards, Request, Res } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ResponseDto } from './../response.dto';
 import { FeedService } from './feed.service';
@@ -10,11 +10,10 @@ export class FeedController {
     constructor(private readonly feedService: FeedService) { }
 
 
-
-    @UseGuards(AuthGuard('jwt'))
-    @Get('private')
-    async privateFeeds(@Request() req) {
-        await this.feedService.feeds(req.user.id);
+    @Get()
+    async privateFeeds(@Res() res) {
+        const response: ResponseDto = await this.feedService.feeds()
+        return res.status(response.status).json(response)
     }
 
 }

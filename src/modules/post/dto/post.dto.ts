@@ -16,13 +16,12 @@ export class PostDto {
     @MinLength(10)
     caption: string
 
-    @IsNotEmpty()
-    @IsString()
-    type: string
+
+    mode: string
 
     assets: NewAssetDtoObj[]
 
-    // mediaType: string
+
 
     comments: []
     likes: []
@@ -33,7 +32,7 @@ export class PostDto {
 
 export class GetPostDto {
     limit: number
-    type: string
+    mode: string
 }
 
 

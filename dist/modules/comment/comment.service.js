@@ -40,7 +40,7 @@ let CommentService = class CommentService {
                     isSuccess: false
                 };
             let postComment = new this.commentModel({
-                username: user.userName,
+                user: userid,
                 content,
                 post: postid
             });
@@ -86,6 +86,42 @@ let CommentService = class CommentService {
                 message: "comment deleted",
                 status: 200,
                 isSuccess: true
+            };
+        }
+        catch (error) {
+            throw new common_1.HttpException({
+                status: common_1.HttpStatus.BAD_REQUEST,
+                error: error.message,
+            }, common_1.HttpStatus.BAD_REQUEST);
+        }
+    }
+    async getComments(postid) {
+        try {
+            const post = await this.postModel.findOne({ _id: postid });
+            if (!post)
+                return {
+                    message: "post not found",
+                    status: 400,
+                    isSuccess: false
+                };
+            const comments = await this.commentModel.find({ post: postid }).populate({
+                path: "user",
+                model: "User",
+                select: { 'userName': 1, 'email_verified': 1, 'profilePicture': 1 }
+            }).sort({
+                createdAt: 'descending'
+            });
+            if (!comments.length)
+                return {
+                    message: "no comments",
+                    status: 400,
+                    isSuccess: false
+                };
+            return {
+                message: "comments fetched",
+                status: 200,
+                isSuccess: true,
+                data: comments
             };
         }
         catch (error) {

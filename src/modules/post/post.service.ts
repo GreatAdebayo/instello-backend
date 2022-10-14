@@ -30,25 +30,26 @@ export class PostService {
 
 
 
-    private async getPosts(userid: Types.ObjectId, { limit, type }: GetPostDto) {
+    private async getPosts(userid: Types.ObjectId, mode: string) {
         try {
             //fetch posts and populate comments
-            const posts = await this.postModel.find({ user: userid, type }).populate([
+            const posts = await this.postModel.find({ user: userid, mode }).populate([
                 {
-                    path: "comments",
-                    model: "Comment",
-                    options: {
-                        limit: limit || 8
-                    }
+                    path: "user",
+                    model: "User",
+                    select: { 'userName': 1, 'email_verified': 1, 'profilePicture': 1 }
+
                 },
                 {
-                    path: "likes",
-                    model: "Like"
-                }
+                    path: "medias",
+                    model: "PostMedia",
+
+                },
+
             ]
-
-            ).limit(limit || 8) as any
-
+            ).sort({
+                createdAt: 'descending'
+            })
             return posts
 
         } catch (error) {
@@ -62,10 +63,10 @@ export class PostService {
 
 
 
-    async getPrivatePost(userid: Types.ObjectId, { limit, type }: GetPostDto) {
+    async getPrivatePost(userid: Types.ObjectId, mode: string) {
         try {
             // check if user exists and fetch cached user info
-            const [user, cachedItem] = await Promise.all([this.middlewareService.checkUserExists(userid), this.cacheManager.get("private_user_post")])
+            const user = await this.middlewareService.checkUserExists(userid)
 
             if (!user) return {
                 message: "user not found",
@@ -73,18 +74,8 @@ export class PostService {
                 isSuccess: false
             }
 
-
-            if (cachedItem) return {
-                message: "posts succefully fetched",
-                status: 200,
-                isSuccess: true,
-                data: cachedItem
-            }
-
-
-
-            //fetch posts and populate comments and likes
-            const posts = await this.getPosts(userid, { limit, type })
+            //fetch posts
+            const posts = await this.getPosts(userid, mode)
 
             if (posts.length < 1)
                 return {
@@ -92,12 +83,6 @@ export class PostService {
                     status: 200,
                     isSuccess: false
                 }
-
-
-
-            //cache user posts
-            await this.cacheManager.set("private_user_post", posts)
-
 
             return {
                 message: "posts succefully fetched",
@@ -120,127 +105,127 @@ export class PostService {
 
 
 
-    async getPublicPost(userid: Types.ObjectId, username: string, { limit, type }: GetPostDto) {
-        try {
+    // async getPublicPost(userid: Types.ObjectId, username: string, { limit, type }: GetPostDto) {
+    //     try {
 
-            //check if logged in user exists and if username exists
-            const [user, userName] = await Promise.all([this.middlewareService.checkUserExists(userid), this.userModel.findOne({ userName: username })])
-            if (!user) return {
-                message: "user not found",
-                status: 400,
-                isSuccess: false
-            }
-
-
-            if (!userName) return {
-                message: "username not found",
-                status: 400,
-                isSuccess: false
-            }
+    //         //check if logged in user exists and if username exists
+    //         const [user, userName] = await Promise.all([this.middlewareService.checkUserExists(userid), this.userModel.findOne({ userName: username })])
+    //         if (!user) return {
+    //             message: "user not found",
+    //             status: 400,
+    //             isSuccess: false
+    //         }
 
 
-
-            //check if user id is in subscription list
-            if (await this.middlewareService.checkSubscription({ userid, userNameId: userName._id })) {
-                const [posts, cachedItem] = await Promise.all([this.getPosts(userid, { limit, type }), this.cacheManager.get("public_user_post")])
-
-                if (posts.length < 1)
-                    return {
-                        message: "no post yet",
-                        status: 200,
-                        isSuccess: false
-                    }
-
-
-                if (cachedItem) return {
-                    message: "posts succefully fetched",
-                    status: 200,
-                    isSuccess: true,
-                    data: cachedItem
-                }
-
-
-                //cache user posts
-                await this.cacheManager.set("public_user_post", posts)
-
-                return {
-                    message: "posts succefully fetched",
-                    status: 200,
-                    isSuccess: true,
-                    data: posts
-                }
-            } else {
-                return {
-                    message: "you are not in the subscription list",
-                    status: 400,
-                    isSuccess: false
-                }
-            }
-
-        } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.BAD_REQUEST,
-                error: error.message,
-            }, HttpStatus.BAD_REQUEST);
-        }
-    }
+    //         if (!userName) return {
+    //             message: "username not found",
+    //             status: 400,
+    //             isSuccess: false
+    //         }
 
 
 
-    async getPublicTimeLine(userid: Types.ObjectId, username: string, { limit, type }: GetPostDto) {
-        try {
-            //check if logged in user exists and if username exists
-            const [user, userName] = await Promise.all([this.middlewareService.checkUserExists(userid), this.userModel.findOne({ userName: username })])
-            if (!user) return {
-                message: "user not found",
-                status: 400,
-                isSuccess: false
-            }
+    //         //check if user id is in subscription list
+    //         if (await this.middlewareService.checkSubscription({ userid, userNameId: userName._id })) {
+    //             const [posts, cachedItem] = await Promise.all([this.getPosts(userid, { limit, type }), this.cacheManager.get("public_user_post")])
+
+    //             if (posts.length < 1)
+    //                 return {
+    //                     message: "no post yet",
+    //                     status: 200,
+    //                     isSuccess: false
+    //                 }
 
 
-            if (!userName) return {
-                message: "username not found",
-                status: 400,
-                isSuccess: false
-            }
+    //             if (cachedItem) return {
+    //                 message: "posts succefully fetched",
+    //                 status: 200,
+    //                 isSuccess: true,
+    //                 data: cachedItem
+    //             }
 
 
-            const [posts, cachedItem] = await Promise.all([this.getPosts(userid, { limit, type }), this.cacheManager.get("public_timeline")])
+    //             //cache user posts
+    //             await this.cacheManager.set("public_user_post", posts)
 
-            if (posts.length < 1)
-                return {
-                    message: "no post yet",
-                    status: 200,
-                    isSuccess: false
-                }
+    //             return {
+    //                 message: "posts succefully fetched",
+    //                 status: 200,
+    //                 isSuccess: true,
+    //                 data: posts
+    //             }
+    //         } else {
+    //             return {
+    //                 message: "you are not in the subscription list",
+    //                 status: 400,
+    //                 isSuccess: false
+    //             }
+    //         }
 
-
-            if (cachedItem) return {
-                message: "posts succefully fetched",
-                status: 200,
-                isSuccess: true,
-                data: cachedItem
-            }
-
-
-            //cache user posts
-            await this.cacheManager.set("public_timeline", posts)
-
-            return {
-                message: "posts succefully fetched",
-                status: 200,
-                isSuccess: true,
-                data: posts
-            }
+    //     } catch (error) {
+    //         throw new HttpException({
+    //             status: HttpStatus.BAD_REQUEST,
+    //             error: error.message,
+    //         }, HttpStatus.BAD_REQUEST);
+    //     }
+    // }
 
 
-        } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.BAD_REQUEST,
-                error: error.message,
-            }, HttpStatus.BAD_REQUEST);
-        }
-    }
+
+    // async getPublicTimeLine(userid: Types.ObjectId, username: string, { limit, type }: GetPostDto) {
+    //     try {
+    //         //check if logged in user exists and if username exists
+    //         const [user, userName] = await Promise.all([this.middlewareService.checkUserExists(userid), this.userModel.findOne({ userName: username })])
+    //         if (!user) return {
+    //             message: "user not found",
+    //             status: 400,
+    //             isSuccess: false
+    //         }
+
+
+    //         if (!userName) return {
+    //             message: "username not found",
+    //             status: 400,
+    //             isSuccess: false
+    //         }
+
+
+    //         const [posts, cachedItem] = await Promise.all([this.getPosts(userid, { limit, type }), this.cacheManager.get("public_timeline")])
+
+    //         if (posts.length < 1)
+    //             return {
+    //                 message: "no post yet",
+    //                 status: 200,
+    //                 isSuccess: false
+    //             }
+
+
+    //         if (cachedItem) return {
+    //             message: "posts succefully fetched",
+    //             status: 200,
+    //             isSuccess: true,
+    //             data: cachedItem
+    //         }
+
+
+    //         //cache user posts
+    //         await this.cacheManager.set("public_timeline", posts)
+
+    //         return {
+    //             message: "posts succefully fetched",
+    //             status: 200,
+    //             isSuccess: true,
+    //             data: posts
+    //         }
+
+
+    //     } catch (error) {
+    //         throw new HttpException({
+    //             status: HttpStatus.BAD_REQUEST,
+    //             error: error.message,
+    //         }, HttpStatus.BAD_REQUEST);
+    //     }
+    // }
 
 
 
@@ -266,8 +251,6 @@ export class PostService {
                 let savePost = new this.postModel({
                     user: userid,
                     caption: post.caption,
-                    type: post.type
-
                 })
 
                 // attach post_id to media and save
@@ -277,6 +260,8 @@ export class PostService {
                         ...media,
                         post: savePost._id,
                     })
+                    if (media.format === "video") savePost.mode = "video"
+                    if (media.format === "image") savePost.mode = "image"
                     await saveMedia.save();
                     savePost.medias = [...savePost.medias, saveMedia._id]
                 }

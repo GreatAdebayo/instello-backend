@@ -15,8 +15,8 @@ export class PostController {
     @Get('private')
     async getPrivatePost(@Request() req, @Res() res,
         @Query('limit') limit: number,
-        @Query('type') type: string) {
-        const response: ResponseDto = await this.postService.getPrivatePost(req.user.id, { limit: 8, type })
+        @Query('mode') mode: string) {
+        const response: ResponseDto = await this.postService.getPrivatePost(req.user.id, mode)
         return res.status(response.status).json(response)
     }
 
@@ -25,12 +25,12 @@ export class PostController {
 
 
 
-    @UseGuards(AuthGuard('jwt'))
-    @Get('public/:username')
-    async getPublicPost(@Request() req, @Param("username") username: string, @Res() res, @Query("limit") limit: number) {
-        const response: ResponseDto = await this.postService.getPublicPost(req.user.id, username, { limit: 8, type: "default" })
-        return res.status(response.status).json(response)
-    }
+    // @UseGuards(AuthGuard('jwt'))
+    // @Get('public/:username')
+    // async getPublicPost(@Request() req, @Param("username") username: string, @Res() res, @Query("limit") limit: number) {
+    //     const response: ResponseDto = await this.postService.getPublicPost(req.user.id, username, { limit: 8, mode: "default" })
+    //     return res.status(response.status).json(response)
+    // }
 
 
 
@@ -70,12 +70,12 @@ export class PostController {
 
 
 
-    @UseGuards(AuthGuard('jwt'))
-    @Get('public/timeline/:username')
-    async getPublicTimeLine(@Request() req, @Param("username") username: string, @Res() res, @Query("limit") limit: number) {
-        const response: ResponseDto = await this.postService.getPublicTimeLine(req.user.id, username, { limit: 8, type: "timeline" })
-        return res.status(response.status).json(response)
-    }
+    // @UseGuards(AuthGuard('jwt'))
+    // @Get('public/timeline/:username')
+    // async getPublicTimeLine(@Request() req, @Param("username") username: string, @Res() res, @Query("limit") limit: number) {
+    //     const response: ResponseDto = await this.postService.getPublicTimeLine(req.user.id, username, { limit: 8, type: "timeline" })
+    //     return res.status(response.status).json(response)
+    // }
 
 
 }

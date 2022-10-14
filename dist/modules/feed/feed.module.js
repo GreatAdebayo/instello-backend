@@ -16,16 +16,20 @@ const like_schema_1 = require("../../schema/like.schema");
 const mongoose_1 = require("@nestjs/mongoose");
 const follow_schema_1 = require("../../schema/follow.schema");
 const feed_controller_1 = require("./feed.controller");
+const media_schema_1 = require("../../schema/media.schema");
+const user_schema_1 = require("../../schema/user.schema");
 let FeedModule = class FeedModule {
 };
 FeedModule = __decorate([
     (0, common_1.Module)({
         providers: [feed_service_1.FeedService],
         imports: [mongoose_1.MongooseModule.forFeature([
+                { name: 'User', schema: user_schema_1.UserSchema },
                 { name: 'Post', schema: post_schema_1.PostSchema },
                 { name: 'Comment', schema: comment_schema_1.CommentSchema },
                 { name: 'Like', schema: like_schema_1.LikeSchema },
                 { name: 'Follow', schema: follow_schema_1.FollowSchema },
+                { name: 'PostMedia', schema: media_schema_1.PostMediaSchema },
             ]), middleware_module_1.MiddleWareModule],
         controllers: [feed_controller_1.FeedController]
     })

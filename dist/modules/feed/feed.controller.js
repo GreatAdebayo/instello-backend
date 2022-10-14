@@ -14,20 +14,19 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FeedController = void 0;
 const common_1 = require("@nestjs/common");
-const passport_1 = require("@nestjs/passport");
 const feed_service_1 = require("./feed.service");
 let FeedController = class FeedController {
     constructor(feedService) {
         this.feedService = feedService;
     }
-    async privateFeeds(req) {
-        await this.feedService.feeds(req.user.id);
+    async privateFeeds(res) {
+        const response = await this.feedService.feeds();
+        return res.status(response.status).json(response);
     }
 };
 __decorate([
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
-    (0, common_1.Get)('private'),
-    __param(0, (0, common_1.Request)()),
+    (0, common_1.Get)(),
+    __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)

@@ -6,7 +6,7 @@ export interface NewAssetDtoObj {
 export declare class PostDto {
     user: Types.ObjectId;
     caption: string;
-    type: string;
+    mode: string;
     assets: NewAssetDtoObj[];
     comments: [];
     likes: [];
@@ -14,5 +14,5 @@ export declare class PostDto {
 }
 export declare class GetPostDto {
     limit: number;
-    type: string;
+    mode: string;
 }

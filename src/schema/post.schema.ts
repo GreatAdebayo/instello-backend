@@ -31,7 +31,7 @@ export const PostSchema = new Schema(
             },
         ],
 
-        type: {
+        mode: {
             type: String,
             required: true,
         }

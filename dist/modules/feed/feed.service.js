@@ -18,58 +18,41 @@ const middleware_service_1 = require("../middlewares/middleware.service");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 let FeedService = class FeedService {
-    constructor(postModel, commentModel, followModel, middlewareService) {
+    constructor(postModel, commentModel, followModel, postMediaModel, userModel, middlewareService) {
         this.postModel = postModel;
         this.commentModel = commentModel;
         this.followModel = followModel;
+        this.postMediaModel = postMediaModel;
+        this.userModel = userModel;
         this.middlewareService = middlewareService;
     }
-    async fetchFeeds(userid) {
+    async feeds() {
         try {
-            const personal = await this.postModel.find({ userid, type: "timeline" });
-            const [followings, followers] = await Promise.all([this.followModel.find({ "follower.id": userid }).select("following"),
-                this.followModel.find({ "following.id": userid }).select("follower")]);
-            const followersIds = [];
-            const followindIds = [];
-            if (followings.length > 0 && followers.length > 0) {
-                ((callback) => {
-                    followers.forEach((follower, followerindex) => {
-                        followersIds.push(follower.follower.id);
-                        if (followerindex == followers.length - 1) {
-                        }
-                    });
-                })((a, b) => {
-                    console.log(a);
-                    console.log(b);
-                });
-            }
-            else {
+            const feeds = await this.postModel.find().populate([
+                {
+                    path: "user",
+                    model: "User",
+                    select: { 'userName': 1, 'email_verified': 1, 'profilePicture': 1 }
+                },
+                {
+                    path: "medias",
+                    model: "PostMedia",
+                },
+            ]).sort({
+                createdAt: 'descending'
+            });
+            if (!feeds.length)
                 return {
-                    message: "timeline fetched",
-                    status: 200,
-                    isSuccess: true,
-                    data: personal
-                };
-            }
-        }
-        catch (error) {
-            console.log(error);
-            throw new common_1.HttpException({
-                status: common_1.HttpStatus.BAD_REQUEST,
-                error: error.message,
-            }, common_1.HttpStatus.BAD_REQUEST);
-        }
-    }
-    async feeds(userid) {
-        try {
-            const user = await this.middlewareService.checkUserExists(userid);
-            if (!user)
-                return {
-                    message: "user not found",
+                    message: "no feeds found",
                     status: 400,
                     isSuccess: false
                 };
-            const feeds = await this.fetchFeeds(userid);
+            return {
+                message: "feeds fetched",
+                status: 200,
+                isSuccess: true,
+                data: feeds
+            };
         }
         catch (error) {
             throw new common_1.HttpException({
@@ -84,7 +67,11 @@ FeedService = __decorate([
     __param(0, (0, mongoose_1.InjectModel)('Post')),
     __param(1, (0, mongoose_1.InjectModel)('Comment')),
     __param(2, (0, mongoose_1.InjectModel)('Follow')),
+    __param(3, (0, mongoose_1.InjectModel)('PostMedia')),
+    __param(4, (0, mongoose_1.InjectModel)('User')),
     __metadata("design:paramtypes", [mongoose_2.Model,
+        mongoose_2.Model,
+        mongoose_2.Model,
         mongoose_2.Model,
         mongoose_2.Model,
         middleware_service_1.MiddleWareService])

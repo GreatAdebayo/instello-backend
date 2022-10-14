@@ -18,4 +18,17 @@ export declare class CommentService {
         status: number;
         isSuccess: boolean;
     }>;
+    getComments(postid: Types.ObjectId): Promise<{
+        message: string;
+        status: number;
+        isSuccess: boolean;
+        data?: undefined;
+    } | {
+        message: string;
+        status: number;
+        isSuccess: boolean;
+        data: Omit<import("mongoose").Document<unknown, any, CommentDto> & CommentDto & {
+            _id: Types.ObjectId;
+        }, never>[];
+    }>;
 }

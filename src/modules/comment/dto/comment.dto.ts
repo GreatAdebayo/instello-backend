@@ -6,7 +6,7 @@ export class CommentDto {
     post: Types.ObjectId
 
 
-    username: string
+    user: Types.ObjectId
 
     @IsNotEmpty()
     @IsString()

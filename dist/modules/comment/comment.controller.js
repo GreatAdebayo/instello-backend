@@ -26,8 +26,12 @@ let CommentController = class CommentController {
         const response = await this.commentService.postComment(body, postid, req.user.id);
         return res.status(response.status).json(response);
     }
-    async deletePost({ comid, postid }, req, res) {
+    async deleteComment({ comid, postid }, req, res) {
         const response = await this.commentService.deleteComment(comid, postid, req.user.id);
+        return res.status(response.status).json(response);
+    }
+    async getComments(postid, res) {
+        const response = await this.commentService.getComments(postid);
         return res.status(response.status).json(response);
     }
 };
@@ -51,7 +55,16 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object, Object]),
     __metadata("design:returntype", Promise)
-], CommentController.prototype, "deletePost", null);
+], CommentController.prototype, "deleteComment", null);
+__decorate([
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, common_1.Get)('/:id'),
+    __param(0, (0, common_1.Param)("id")),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [mongoose_1.Types.ObjectId, Object]),
+    __metadata("design:returntype", Promise)
+], CommentController.prototype, "getComments", null);
 CommentController = __decorate([
     (0, common_1.Controller)('api/comment'),
     __metadata("design:paramtypes", [comment_service_1.CommentService])

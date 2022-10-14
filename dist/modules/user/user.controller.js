@@ -16,7 +16,6 @@ exports.UserController = void 0;
 const common_1 = require("@nestjs/common");
 const passport_1 = require("@nestjs/passport");
 const user_service_1 = require("./user.service");
-const throttler_1 = require("@nestjs/throttler");
 let UserController = class UserController {
     constructor(userService) {
         this.userService = userService;
@@ -66,8 +65,6 @@ __decorate([
 ], UserController.prototype, "publiceUserInfo", null);
 __decorate([
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
-    (0, common_1.UseGuards)(throttler_1.ThrottlerGuard),
-    (0, throttler_1.Throttle)(1, 1),
     (0, common_1.Get)('search'),
     __param(0, (0, common_1.Res)()),
     __param(1, (0, common_1.Query)('page')),

@@ -30,8 +30,8 @@ export class UserController {
 
 
     @UseGuards(AuthGuard('jwt'))
-    @UseGuards(ThrottlerGuard)
-    @Throttle(1, 1)
+    // @UseGuards(ThrottlerGuard)
+    // @Throttle(1, 1)
     @Get('search')
     async searchUser(@Res() res, @Query('page') page: number = 1,
         @Query('limit') limit: number = 5,

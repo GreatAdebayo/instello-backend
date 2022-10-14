@@ -1,6 +1,5 @@
 import * as mongoose from 'mongoose';
 export declare const PostSchema: mongoose.Schema<any, mongoose.Model<any, any, any, any, any>, {}, {}, {}, {}, "type", {
-    type: string;
     user: mongoose.Types.ObjectId;
     medias: {
         type?: mongoose.Types.ObjectId;
@@ -14,5 +13,6 @@ export declare const PostSchema: mongoose.Schema<any, mongoose.Model<any, any, a
         type?: mongoose.Types.ObjectId;
         ref?: unknown;
     }[];
+    mode: string;
     caption?: string;
 }>;

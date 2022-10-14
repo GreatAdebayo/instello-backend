@@ -1,6 +1,6 @@
 import { Model } from 'mongoose';
 import { UserDto } from 'src/modules/signup/dto/user.dto';
-import { GetPostDto, PostDto } from './dto/post.dto';
+import { PostDto } from './dto/post.dto';
 import { Cache } from 'cache-manager';
 import { SubscriptionDto } from './dto/subscription.dto';
 import { Types } from "mongoose";
@@ -20,7 +20,7 @@ export declare class PostService {
     private readonly cloudinaryService;
     constructor(userModel: Model<UserDto>, postModel: Model<PostDto>, commentModel: Model<CommentDto>, postMediaModel: Model<any>, subscriptionModel: Model<SubscriptionDto>, likeModel: Model<LikeDto>, cacheManager: Cache, middlewareService: MiddleWareService, cloudinaryService: CloudinaryService);
     private getPosts;
-    getPrivatePost(userid: Types.ObjectId, { limit, type }: GetPostDto): Promise<{
+    getPrivatePost(userid: Types.ObjectId, mode: string): Promise<{
         message: string;
         status: number;
         isSuccess: boolean;
@@ -29,29 +29,9 @@ export declare class PostService {
         message: string;
         status: number;
         isSuccess: boolean;
-        data: unknown;
-    }>;
-    getPublicPost(userid: Types.ObjectId, username: string, { limit, type }: GetPostDto): Promise<{
-        message: string;
-        status: number;
-        isSuccess: boolean;
-        data?: undefined;
-    } | {
-        message: string;
-        status: number;
-        isSuccess: boolean;
-        data: unknown;
-    }>;
-    getPublicTimeLine(userid: Types.ObjectId, username: string, { limit, type }: GetPostDto): Promise<{
-        message: string;
-        status: number;
-        isSuccess: boolean;
-        data?: undefined;
-    } | {
-        message: string;
-        status: number;
-        isSuccess: boolean;
-        data: unknown;
+        data: Omit<import("mongoose").Document<unknown, any, PostDto> & PostDto & {
+            _id: Types.ObjectId;
+        }, never>[];
     }>;
     newPost(userid: Types.ObjectId, post: PostDto): Promise<{
         message: any;
