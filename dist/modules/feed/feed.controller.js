@@ -21,6 +21,7 @@ let FeedController = class FeedController {
     }
     async privateFeeds(res) {
         const response = await this.feedService.feeds();
+        return res.status(response.status).json(response);
     }
 };
 __decorate([
